@@ -44,12 +44,15 @@ const SignIn = () => {
                   required: true,
                   message: "Please input your Email!",
                 },
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
+                },
               ]}
             >
               <Input
                 prefix={<HiOutlineMail className="site-form-item-icon" />}
                 placeholder="Email"
-                type="email"
                 size="large"
               />
             </Form.Item>
