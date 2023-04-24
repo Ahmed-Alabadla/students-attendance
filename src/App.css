@@ -42,6 +42,9 @@ section {
 .ant-menu li:first-child {
   margin-bottom: 3.5rem;
 }
+.ant-menu li:last-child {
+  margin-bottom: 3.5rem;
+}
 
 #register div:last-child .ant-form-item-row {
   justify-content: center;
@@ -62,7 +65,7 @@ section {
 }
 
 @media (min-width: 768px) {
-  .ant-tabs-nav-list {
+  .home .ant-tabs-nav-list {
     gap: 4rem;
   }
 }

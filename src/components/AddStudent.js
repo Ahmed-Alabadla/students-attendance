@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, Select, Space } from "antd";
 import React from "react";
 
 const { Option } = Select;
@@ -156,9 +156,31 @@ const AddStudent = () => {
             },
           ]}
         >
-          <Select placeholder="select Course" size="large">
-            <Option value="ECOM3401">DB</Option>
-            <Option value="ECOM3302">Java 2</Option>
+          <Select
+            placeholder="select Course"
+            size="large"
+            mode="multiple"
+            style={{
+              width: "100%",
+            }}
+            optionLabelProp="label"
+          >
+            <Option value="ECOM3401" label="DB">
+              <Space>
+                <span role="img" aria-label="DB" className="text-xs">
+                  ECOM3401
+                </span>
+                DB
+              </Space>
+            </Option>
+            <Option value="ECOM3302" label="Java 2">
+              <Space>
+                <span role="img" aria-label="Java 2" className="text-xs">
+                  ECOM3302
+                </span>
+                Java 2
+              </Space>
+            </Option>
           </Select>
         </Form.Item>
 

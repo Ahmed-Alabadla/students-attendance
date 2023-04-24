@@ -16,6 +16,8 @@ import AddSection from "./components/AddSection";
 import AddTeachingAssistant from "./components/AddTeachingAssistant";
 import AddStudent from "./components/AddStudent";
 import Home from "./components/Home";
+import QRScanner from "./components/QRScanner";
+import AddInstructor from "./components/AddInstructor";
 
 function App() {
   // return loggedIN ? (
@@ -39,11 +41,10 @@ function App() {
           <Route path="/" element={<Sidebar />}>
             <Route path="" element={<Home />} />
             <Route path="add-section" element={<AddSection />} />
-            <Route
-              path="add-teaching-assistant"
-              element={<AddTeachingAssistant />}
-            />
-            <Route path="add-student" element={<AddStudent />} />
+            <Route path="qr" element={<QRScanner />} />
+            <Route path="add-assistant" element={<AddTeachingAssistant />} />
+            <Route path="add-students" element={<AddStudent />} />
+            <Route path="add-instructor" element={<AddInstructor />} />
             <Route path="profile" element={<Profile />} />
           </Route>
           <Route path="/login" element={<SignIn />} />

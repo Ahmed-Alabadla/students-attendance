@@ -5,11 +5,10 @@ import {
   EyeFilled,
   HomeOutlined,
   UserAddOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { CgPlayListAdd } from "react-icons/cg";
 import { SiGooglesheets, SiGoogleclassroom } from "react-icons/si";
-import { CiExport } from "react-icons/ci";
-import { BsFillPersonPlusFill } from "react-icons/bs";
 
 import { Avatar, Breadcrumb, Layout, Menu, Tooltip } from "antd";
 
@@ -28,13 +27,15 @@ function getItem(label, key, icon, children) {
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [loggedIN, setLoggedIN] = useState(true);
+
   const route = useNavigate();
-
   useEffect(() => {
-    if (loggedIN === false) route("/login");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      route("/login");
+    }
   }, []);
-
+  // ------------------------------------------
   const items = [
     getItem(
       <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
@@ -58,38 +59,57 @@ const Sidebar = () => {
     ),
 
     getItem(
-      <button onClick={() => route("add-teaching-assistant")}>
-        Add Teaching Assistant /M
-      </button>,
-      "add-teaching-assistant",
+      <button onClick={() => route("add-assistant")}>Add Assistant / I</button>,
+      "add-assistant",
       <UserAddOutlined
         style={{ fontSize: "22px" }}
-        onClick={() => route("add-teaching-assistant")}
+        onClick={() => route("add-assistant")}
+      />
+    ),
+    getItem(
+      <button onClick={() => route("add-instructor")}>
+        Add Instructor / A
+      </button>,
+      "add-instructor",
+      <UserAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("add-instructor")}
+      />
+    ),
+    getItem(
+      <button onClick={() => route("add-students")}>Add Students / A</button>,
+      "add-students",
+      <UsergroupAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("add-student")}
       />
     ),
 
-    getItem("Add Course / M", "3", <CgPlayListAdd size={30} />),
-    getItem("Add Section / TA", "4", <CgPlayListAdd size={30} />),
+    getItem("Add Course / A", "3", <CgPlayListAdd size={30} />),
     getItem(
-      <button onClick={() => route("add-student")}>Add Student / M</button>,
-      "add-student",
-      <BsFillPersonPlusFill size={28} onClick={() => route("add-student")} />
+      <button onClick={() => route("add-section")}>Add Section / TA</button>,
+      "4",
+      <CgPlayListAdd size={30} onClick={() => route("add-section")} />
     ),
-    getItem("Add class room /M", "6", <SiGoogleclassroom size={25} />),
+
+    getItem("Add class room /A", "6", <SiGoogleclassroom size={25} />),
     getItem(
       "Attendance sheets",
       "7",
       <SiGooglesheets style={{ fontSize: "22px" }} />
     ),
-    getItem("Export Reports", "8", <CiExport size={28} />),
+    // getItem("Export Reports", "8", <CiExport size={28} />),
   ];
 
   // ------------------------------------
 
   const breadcrumbNameMap = {
     "/profile": "Profile",
-    "/add-teaching-assistant": "Add Teaching Assistant",
-    "/add-student": "Add Student",
+    "/add-section": "Add Section",
+    "/add-course": "Add Course",
+    "/add-assistant": "Add Assistant",
+    "/add-instructor": "Add Instructor",
+    "/add-students": "Add Students",
   };
 
   const pathSnippets = window.location.pathname.split("/").filter((i) => i);
@@ -112,6 +132,8 @@ const Sidebar = () => {
       key: "home",
     },
   ].concat(extraBreadcrumbItems);
+
+  // --------------------
 
   return (
     <>

@@ -5,7 +5,7 @@ import Courses from "./Courses";
 
 const Home = () => {
   return (
-    <div className="bg-[#f5f5f5] h-full p-5 rounded-lg">
+    <div className="home bg-[#f5f5f5] h-full p-5 rounded-lg">
       <Tabs defaultActiveKey="1" centered size="large">
         <TabPane tab="Lecture Times" key="1">
           Content of Tab Pane 1

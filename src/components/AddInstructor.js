@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select } from "antd";
+import { Form, Input, Select, Button } from "antd";
 import React from "react";
 
 const { Option } = Select;
@@ -22,7 +22,7 @@ const formItemLayout = {
   },
 };
 
-const AddTeachingAssistant = () => {
+const AddInstructor = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -32,7 +32,7 @@ const AddTeachingAssistant = () => {
   return (
     <div className="bg-[#f5f5f5] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Add Assistant
+        Add Instructor
       </p>
       <Form
         {...formItemLayout}
@@ -78,6 +78,7 @@ const AddTeachingAssistant = () => {
         >
           <Input placeholder="Enter an email" size="large" />
         </Form.Item>
+
         <Form.Item
           name="password"
           label="Password"
@@ -185,4 +186,4 @@ const AddTeachingAssistant = () => {
   );
 };
 
-export default AddTeachingAssistant;
+export default AddInstructor;
