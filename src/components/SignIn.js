@@ -33,7 +33,7 @@ const SignIn = () => {
   const [form_assistant] = Form.useForm();
   const [loadingAssistant, setLoadingAssistant] = useState(false);
   const [errorAssistant, setErrorAssistant] = useState(false);
-
+  // localStorage.clear();
   const login_assistant = (values) => {
     setLoadingAssistant(true);
     const data = { ...values, type: "assistant" };
@@ -47,8 +47,8 @@ const SignIn = () => {
         },
       })
       .then((res) => {
-        // console.log(res.data);
         localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("type", res.data.data.type);
         setLoadingAssistant(false);
         setErrorAssistant(false);
         form_assistant.resetFields();
@@ -66,8 +66,10 @@ const SignIn = () => {
   const [errorInstructor, setErrorInstructor] = useState(false);
 
   const login_instructor = (values) => {
+    setLoadingInstructor(true);
     const data = { ...values, type: "instructor" };
     // console.log("Received values of form -- instructor: ", data);
+
     api
       .post("login", data, {
         headers: {
@@ -78,6 +80,8 @@ const SignIn = () => {
       .then((res) => {
         // console.log(res.data);
         localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("type", res.data.data.type);
+
         setLoadingInstructor(false);
         setErrorInstructor(false);
         form_instructor.resetFields();
@@ -95,9 +99,9 @@ const SignIn = () => {
   const [errorAdmin, setErrorAdmin] = useState(false);
 
   const login_admin = (values) => {
+    setLoadingAdmin(true);
     const data = { ...values, type: "admin" };
     // console.log("Received values of form -- admin: ", data);
-
     api
       .post("login", data, {
         headers: {
@@ -108,6 +112,8 @@ const SignIn = () => {
       .then((res) => {
         // console.log(res.data);
         localStorage.setItem("token", res.data.data.token);
+        localStorage.setItem("type", res.data.data.type);
+
         setLoadingAdmin(false);
         setErrorAdmin(false);
         form_admin.resetFields();

@@ -12,24 +12,21 @@ import Highlighter from "react-highlight-words";
 const data = [
   {
     id: "1",
-    name: "DB",
-    instructor: "Ahmed",
-    dept_name: "IT",
+    name: "Mohammed",
+    course_name: "DB",
   },
   {
     id: "2",
-    name: "Java 1",
-    instructor: "Ali",
-    dept_name: "IT",
+    name: "Ahmed",
+    course_name: "Java 1",
   },
   {
     id: "3",
-    name: "Java 2",
-    instructor: "Mohammed",
-    dept_name: "IT",
+    name: "Osama",
+    course_name: "Java 2",
   },
 ];
-const Courses = () => {
+const Assistants = () => {
   const route = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -159,16 +156,9 @@ const Courses = () => {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Instructor",
-      dataIndex: "instructor",
-      key: "instructor",
-      width: "20%",
-    },
-
-    {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
+      title: "Course name",
+      dataIndex: "course_name",
+      key: "course_name",
       width: "20%",
     },
 
@@ -202,7 +192,7 @@ const Courses = () => {
         span: 24,
       },
       sm: {
-        span: 6,
+        span: 7,
       },
     },
     wrapperCol: {
@@ -210,7 +200,7 @@ const Courses = () => {
         span: 24,
       },
       sm: {
-        span: 17,
+        span: 16,
       },
     },
   };
@@ -228,7 +218,7 @@ const Courses = () => {
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Courses
+        Assistants
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -236,7 +226,7 @@ const Courses = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Course
+          Add Assistant
         </Button>
         <Table
           className="w-full mt-5"
@@ -257,7 +247,7 @@ const Courses = () => {
           }}
         >
           <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Course
+            Add Assistant
           </p>
           <Form
             {...formItemLayout}
@@ -275,37 +265,116 @@ const Courses = () => {
             scrollToFirstError
           >
             <Form.Item
-              name="student_name"
-              label="Student Name"
+              name="fullname"
+              label="Full Name"
               rules={[
                 {
                   required: true,
-                  message: "Please input your student name!",
+                  message: "Please input your fullname!",
                 },
               ]}
             >
-              <Input size="large" placeholder="Enter a student name" />
+              <Input size="large" placeholder="Enter a Full Name" />
             </Form.Item>
 
             <Form.Item
-              name="dept_name"
-              label="Department"
+              name="email"
+              label="Email"
               rules={[
                 {
                   required: true,
-                  message: "Please select Department!",
+                  message: "Please input your Email!",
+                },
+                {
+                  type: "email",
+                  message: "The input is not valid E-mail!",
                 },
               ]}
             >
-              <Select placeholder="select Department" size="large">
-                <Option value="dept_1">Department 1</Option>
-                <Option value="dept_2">Department 2</Option>
-                <Option value="dept_3">Department 3</Option>
-                <Option value="dept_4">Department 4</Option>
-              </Select>
+              <Input placeholder="Enter an email" size="large" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+                {
+                  pattern: "^.{8,20}$",
+                  message:
+                    "Please enter a password between 8 and 20 characters long.",
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password size="large" placeholder="Enter a password" />
             </Form.Item>
 
-            {/* <Form.Item
+            <Form.Item
+              name="confirm_password"
+              label="Confirm Password"
+              dependencies={["password"]}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: "Please confirm your password!",
+                },
+
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(
+                        "The two passwords that you entered do not match!"
+                      )
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                size="large"
+                placeholder="Enter a confirm password"
+              />
+            </Form.Item>
+
+            <Form.Item label="Phone number">
+              <Input.Group compact className="!flex">
+                <Form.Item
+                  name={["phone_number", "prefix"]}
+                  noStyle
+                  initialValue={"059"}
+                >
+                  <Select size="large">
+                    <Option value="059">059</Option>
+                    <Option value="056">056</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name={["phone_number", "phone"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your phone number!",
+                    },
+                    {
+                      pattern: "^[0-9]{7}$",
+                      message: "Please enter a valid 7-digit phone number.",
+                    },
+                  ]}
+                >
+                  <Input size="large" placeholder="Enter a phone number" />
+                </Form.Item>
+              </Input.Group>
+            </Form.Item>
+
+            <Form.Item
               name="courseID"
               label="Course ID"
               rules={[
@@ -315,51 +384,11 @@ const Courses = () => {
                 },
               ]}
             >
-              <Select
-                placeholder="select Course"
-                size="large"
-                mode="multiple"
-                style={{
-                  width: "100%",
-                }}
-                optionLabelProp="label"
-              >
-                <Option value="ECOM3401" label="DB">
-                  <Space>
-                    <span role="img" aria-label="DB" className="text-xs">
-                      ECOM3401
-                    </span>
-                    DB
-                  </Space>
-                </Option>
-                <Option value="ECOM3302" label="Java 2">
-                  <Space>
-                    <span role="img" aria-label="Java 2" className="text-xs">
-                      ECOM3302
-                    </span>
-                    Java 2
-                  </Space>
-                </Option>
+              <Select placeholder="select Course" size="large">
+                <Option value="ECOM3401">DB</Option>
+                <Option value="ECOM3302">Java 2</Option>
               </Select>
             </Form.Item>
-
-            <Form.Item
-              name="room_number"
-              label="Room Number"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select room_number!",
-                },
-              ]}
-            >
-              <Select placeholder="select Room Number" size="large">
-                <Option value="room1">Room 1</Option>
-                <Option value="room2">Room 2</Option>
-                <Option value="room3">Room 3</Option>
-                <Option value="room4">Room 4</Option>
-              </Select>
-            </Form.Item> */}
 
             <Form.Item className="">
               <Button
@@ -368,7 +397,7 @@ const Courses = () => {
                 size="large"
                 className="w-full "
               >
-                Add Course
+                Register
               </Button>
             </Form.Item>
           </Form>
@@ -378,4 +407,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Assistants;

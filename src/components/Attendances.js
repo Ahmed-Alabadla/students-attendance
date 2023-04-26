@@ -1,5 +1,5 @@
 import { Button, Form, Input, Select } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
@@ -23,18 +23,27 @@ const formItemLayout = {
   },
 };
 
-const AddSection = () => {
+const Attendances = () => {
+  const route = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      route("/login");
+    }
+  }, []);
+  // ----------------------
+
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    window.location.assign("/qr");
     console.log("Received values of form: ", values);
+    route("/show-attendances");
     form.resetFields();
   };
 
   return (
     <div className="bg-[#f5f5f5] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Add Section
+        Attendances
       </p>
       <Form
         {...formItemLayout}
@@ -49,16 +58,38 @@ const AddSection = () => {
         scrollToFirstError
       >
         <Form.Item
-          name="section_name"
-          label="Section Name"
+          name="year"
+          label="Year"
           rules={[
             {
               required: true,
-              message: "Please input your section name!",
+              message: "Please select year!",
             },
           ]}
         >
-          <Input size="large" placeholder="Enter a section name" />
+          <Select placeholder="select year" size="large">
+            <Option value="2023_2024">2023-2024</Option>
+            <Option value="2022_2023">2022-2023</Option>
+            <Option value="2021_2022">2021-2022</Option>
+            <Option value="2020_2021">2020-2021</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="semester"
+          label="Semester"
+          rules={[
+            {
+              required: true,
+              message: "Please select semester!",
+            },
+          ]}
+        >
+          <Select placeholder="select semester" size="large">
+            <Option value="first_semester">First Semester</Option>
+            <Option value="first_semester">Second Semester</Option>
+            <Option value="summer_semester">Summer Semester</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -95,41 +126,6 @@ const AddSection = () => {
           </Select>
         </Form.Item>
 
-        <Form.Item
-          name="year"
-          label="Year"
-          rules={[
-            {
-              required: true,
-              message: "Please select year!",
-            },
-          ]}
-        >
-          <Select placeholder="select year" size="large">
-            <Option value="2023_2024">2023-2024</Option>
-            <Option value="2022_2023">2022-2023</Option>
-            <Option value="2021_2022">2021-2022</Option>
-            <Option value="2020_2021">2020-2021</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="semester"
-          label="Semester"
-          rules={[
-            {
-              required: true,
-              message: "Please select semester!",
-            },
-          ]}
-        >
-          <Select placeholder="select semester" size="large">
-            <Option value="first_semester">First Semester</Option>
-            <Option value="first_semester">Second Semester</Option>
-            <Option value="summer_semester">Summer Semester</Option>
-          </Select>
-        </Form.Item>
-
         <Form.Item className="">
           <Button
             type="primary"
@@ -137,7 +133,7 @@ const AddSection = () => {
             size="large"
             className="w-full "
           >
-            Add Section
+            Show Attendance
           </Button>
         </Form.Item>
       </Form>
@@ -145,4 +141,4 @@ const AddSection = () => {
   );
 };
 
-export default AddSection;
+export default Attendances;

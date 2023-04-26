@@ -12,24 +12,21 @@ import Highlighter from "react-highlight-words";
 const data = [
   {
     id: "1",
-    name: "DB",
-    instructor: "Ahmed",
-    dept_name: "IT",
+    name: "Ahmed",
+    number: "120200956",
   },
   {
     id: "2",
-    name: "Java 1",
-    instructor: "Ali",
-    dept_name: "IT",
+    name: "Ali",
+    number: "120200383",
   },
   {
     id: "3",
-    name: "Java 2",
-    instructor: "Mohammed",
-    dept_name: "IT",
+    name: "Mohammed",
+    number: "120200370",
   },
 ];
-const Courses = () => {
+const Students = () => {
   const route = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -159,17 +156,16 @@ const Courses = () => {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Instructor",
-      dataIndex: "instructor",
-      key: "instructor",
-      width: "20%",
+      title: "Student number",
+      dataIndex: "number",
+      key: "number",
+      width: "25%",
     },
 
     {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      width: "20%",
+      title: "Courses",
+      key: "add_course",
+      render: () => <Button>Add course</Button>,
     },
 
     {
@@ -228,7 +224,7 @@ const Courses = () => {
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Courses
+        Students
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -236,7 +232,7 @@ const Courses = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Course
+          Add Student
         </Button>
         <Table
           className="w-full mt-5"
@@ -257,7 +253,7 @@ const Courses = () => {
           }}
         >
           <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Course
+            Add student
           </p>
           <Form
             {...formItemLayout}
@@ -288,21 +284,87 @@ const Courses = () => {
             </Form.Item>
 
             <Form.Item
-              name="dept_name"
-              label="Department"
+              fieldProps={{ pattern: "^[0-9]{9}$" }}
+              name="student_number"
+              label="Student Number"
               rules={[
                 {
                   required: true,
-                  message: "Please select Department!",
+                  message: "Please input student number!",
+                },
+                {
+                  pattern: "^[0-9]{9}$",
+                  message: "Please enter a valid 9-digit student number!",
                 },
               ]}
             >
-              <Select placeholder="select Department" size="large">
-                <Option value="dept_1">Department 1</Option>
-                <Option value="dept_2">Department 2</Option>
-                <Option value="dept_3">Department 3</Option>
-                <Option value="dept_4">Department 4</Option>
-              </Select>
+              <Input size="large" placeholder="ex: 12020xxxx" />
+            </Form.Item>
+
+            <Form.Item label="Phone number">
+              <Input.Group compact className="!flex">
+                <Form.Item
+                  name={["phone_number", "prefix"]}
+                  noStyle
+                  initialValue={"059"}
+                >
+                  <Select size="large">
+                    <Option value="059">059</Option>
+                    <Option value="056">056</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name={["phone_number", "phone"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your phone number!",
+                    },
+                    {
+                      pattern: "^[0-9]{7}$",
+                      message: "Please enter a valid 7-digit phone number.",
+                    },
+                  ]}
+                >
+                  <Input size="large" placeholder="Enter a phone number" />
+                </Form.Item>
+              </Input.Group>
+            </Form.Item>
+
+            <Form.Item label="Address">
+              <Input.Group compact className="!flex">
+                <Form.Item
+                  name={["address", "city"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: "City is required",
+                    },
+                  ]}
+                >
+                  <Select placeholder="Select City" size="large">
+                    <Option value="northern_gaza">Northern Gaza</Option>
+                    <Option value="gaza">Gaza</Option>
+                    <Option value="alwustaa">Alwustaa</Option>
+                    <Option value="khan_yunis">Khan Yunis</Option>
+                    <Option value="rafah">Rafah</Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name={["address", "street"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: "Street is required",
+                    },
+                  ]}
+                >
+                  <Input size="large" placeholder="Input street" />
+                </Form.Item>
+              </Input.Group>
             </Form.Item>
 
             {/* <Form.Item
@@ -368,7 +430,7 @@ const Courses = () => {
                 size="large"
                 className="w-full "
               >
-                Add Course
+                Add Student
               </Button>
             </Form.Item>
           </Form>
@@ -378,4 +440,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Students;

@@ -13,23 +13,26 @@ const data = [
   {
     id: "1",
     name: "DB",
-    instructor: "Ahmed",
-    dept_name: "IT",
+    year: "2021-2022",
+    semester: "first semester",
+    percent_attendance: "89%",
   },
   {
     id: "2",
     name: "Java 1",
-    instructor: "Ali",
-    dept_name: "IT",
+    year: "2020-2021",
+    semester: "first semester",
+    percent_attendance: "100%",
   },
   {
     id: "3",
     name: "Java 2",
-    instructor: "Mohammed",
-    dept_name: "IT",
+    year: "2020-2021",
+    semester: "second semester",
+    percent_attendance: "80%",
   },
 ];
-const Courses = () => {
+const Sections = () => {
   const route = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -159,17 +162,26 @@ const Courses = () => {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Instructor",
-      dataIndex: "instructor",
-      key: "instructor",
-      width: "20%",
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+      sorter: (a, b) => a.year.localeCompare(b.year),
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Semester",
+      dataIndex: "semester",
+      key: "semester",
+      sorter: (a, b) => a.semester.localeCompare(b.semester),
+      sortDirections: ["descend", "ascend"],
     },
 
     {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      width: "20%",
+      title: "Percentage Attendance",
+      dataIndex: "percent_attendance",
+      key: "percent_attendance",
+      sorter: (a, b) => a.id - b.id,
+      sortDirections: ["descend", "ascend"],
     },
 
     {
@@ -177,19 +189,7 @@ const Courses = () => {
       key: "operation",
       // fixed: "right",
       // width: '10%',
-      render: () => (
-        <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
-            <EditFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
-            <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-        </div>
-      ),
+      render: () => <Button>Details</Button>,
     },
   ];
 
@@ -222,13 +222,14 @@ const Courses = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    route("/record-attendance");
     form.resetFields();
   };
 
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Courses
+        Sections
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -236,7 +237,7 @@ const Courses = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Course
+          Add Section
         </Button>
         <Table
           className="w-full mt-5"
@@ -257,7 +258,7 @@ const Courses = () => {
           }}
         >
           <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Course
+            Add Section
           </p>
           <Form
             {...formItemLayout}
@@ -265,9 +266,6 @@ const Courses = () => {
             name="register"
             onFinish={onFinish}
             className="mx-auto"
-            initialValues={{
-              prefix: "059",
-            }}
             style={{
               width: "100%",
               maxWidth: 700,
@@ -275,37 +273,19 @@ const Courses = () => {
             scrollToFirstError
           >
             <Form.Item
-              name="student_name"
-              label="Student Name"
+              name="section_name"
+              label="Section Name"
               rules={[
                 {
                   required: true,
-                  message: "Please input your student name!",
+                  message: "Please input your section name!",
                 },
               ]}
             >
-              <Input size="large" placeholder="Enter a student name" />
+              <Input size="large" placeholder="Enter a section name" />
             </Form.Item>
 
             <Form.Item
-              name="dept_name"
-              label="Department"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select Department!",
-                },
-              ]}
-            >
-              <Select placeholder="select Department" size="large">
-                <Option value="dept_1">Department 1</Option>
-                <Option value="dept_2">Department 2</Option>
-                <Option value="dept_3">Department 3</Option>
-                <Option value="dept_4">Department 4</Option>
-              </Select>
-            </Form.Item>
-
-            {/* <Form.Item
               name="courseID"
               label="Course ID"
               rules={[
@@ -315,31 +295,9 @@ const Courses = () => {
                 },
               ]}
             >
-              <Select
-                placeholder="select Course"
-                size="large"
-                mode="multiple"
-                style={{
-                  width: "100%",
-                }}
-                optionLabelProp="label"
-              >
-                <Option value="ECOM3401" label="DB">
-                  <Space>
-                    <span role="img" aria-label="DB" className="text-xs">
-                      ECOM3401
-                    </span>
-                    DB
-                  </Space>
-                </Option>
-                <Option value="ECOM3302" label="Java 2">
-                  <Space>
-                    <span role="img" aria-label="Java 2" className="text-xs">
-                      ECOM3302
-                    </span>
-                    Java 2
-                  </Space>
-                </Option>
+              <Select placeholder="select Course" size="large">
+                <Option value="ECOM3401">DB</Option>
+                <Option value="ECOM3302">Java 2</Option>
               </Select>
             </Form.Item>
 
@@ -359,7 +317,42 @@ const Courses = () => {
                 <Option value="room3">Room 3</Option>
                 <Option value="room4">Room 4</Option>
               </Select>
-            </Form.Item> */}
+            </Form.Item>
+
+            <Form.Item
+              name="year"
+              label="Year"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select year!",
+                },
+              ]}
+            >
+              <Select placeholder="select year" size="large">
+                <Option value="2023_2024">2023-2024</Option>
+                <Option value="2022_2023">2022-2023</Option>
+                <Option value="2021_2022">2021-2022</Option>
+                <Option value="2020_2021">2020-2021</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="semester"
+              label="Semester"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select semester!",
+                },
+              ]}
+            >
+              <Select placeholder="select semester" size="large">
+                <Option value="first_semester">First Semester</Option>
+                <Option value="first_semester">Second Semester</Option>
+                <Option value="summer_semester">Summer Semester</Option>
+              </Select>
+            </Form.Item>
 
             <Form.Item className="">
               <Button
@@ -368,7 +361,7 @@ const Courses = () => {
                 size="large"
                 className="w-full "
               >
-                Add Course
+                Add Section
               </Button>
             </Form.Item>
           </Form>
@@ -378,4 +371,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Sections;

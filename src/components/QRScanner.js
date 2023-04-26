@@ -6,20 +6,23 @@ import "react-toastify/dist/ReactToastify.css";
 
 const QRScanner = () => {
   const [id, setId] = useState();
+  const [scan, setScan] = useState(false);
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     api
       .post(
-        "attend",
-        { data: id },
+        "attendances",
+        { student_number: id, section_id: 18 },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "multipart/form-data",
+            // Accept: "application/json",
           },
         }
       )
-
       .then((res) => {
         // console.log(res.data);
         toast.success(res.data, {
@@ -34,9 +37,10 @@ const QRScanner = () => {
         });
       })
       .catch((err) => {
-        toast.error("🦄 Wow so easy!", {
+        // console.log(err);
+        toast.error(err, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -45,15 +49,20 @@ const QRScanner = () => {
           theme: "colored",
         });
       });
-    // setTimeout(() => {
-    // }, 3000);
+    // if (token) {
+    //   if (scan) {
+    //   }
+    // }
   }, [id]);
 
   return (
     <div className="flex justify-center  h-full">
-      <div className=" w-[500px]">
+      <div className=" w-[450px]">
         <QrScanner
-          onDecode={(result) => setId(result)}
+          onDecode={(result) => {
+            setId(result);
+            setScan(true);
+          }}
           onError={(error) => console.log(error?.message)}
         />
       </div>

@@ -12,24 +12,24 @@ import Highlighter from "react-highlight-words";
 const data = [
   {
     id: "1",
-    name: "DB",
+    name: "Room 1",
     instructor: "Ahmed",
     dept_name: "IT",
   },
   {
     id: "2",
-    name: "Java 1",
+    name: "Room 2",
     instructor: "Ali",
     dept_name: "IT",
   },
   {
     id: "3",
-    name: "Java 2",
+    name: "Room 3",
     instructor: "Mohammed",
     dept_name: "IT",
   },
 ];
-const Courses = () => {
+const Classrooms = () => {
   const route = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -228,7 +228,7 @@ const Courses = () => {
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Courses
+        Classrooms
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -236,7 +236,7 @@ const Courses = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Course
+          Add Classroom
         </Button>
         <Table
           className="w-full mt-5"
@@ -257,7 +257,7 @@ const Courses = () => {
           }}
         >
           <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Course
+            Add Classroom
           </p>
           <Form
             {...formItemLayout}
@@ -275,16 +275,32 @@ const Courses = () => {
             scrollToFirstError
           >
             <Form.Item
-              name="student_name"
-              label="Student Name"
+              name="name"
+              label="Name"
               rules={[
                 {
                   required: true,
-                  message: "Please input your student name!",
+                  message: "Please input your name!",
                 },
               ]}
             >
-              <Input size="large" placeholder="Enter a student name" />
+              <Input size="large" placeholder="Enter a Name" />
+            </Form.Item>
+
+            <Form.Item
+              name="courseID"
+              label="Course ID"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select course!",
+                },
+              ]}
+            >
+              <Select placeholder="select Course" size="large">
+                <Option value="ECOM3401">DB</Option>
+                <Option value="ECOM3302">Java 2</Option>
+              </Select>
             </Form.Item>
 
             <Form.Item
@@ -305,62 +321,6 @@ const Courses = () => {
               </Select>
             </Form.Item>
 
-            {/* <Form.Item
-              name="courseID"
-              label="Course ID"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select course!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="select Course"
-                size="large"
-                mode="multiple"
-                style={{
-                  width: "100%",
-                }}
-                optionLabelProp="label"
-              >
-                <Option value="ECOM3401" label="DB">
-                  <Space>
-                    <span role="img" aria-label="DB" className="text-xs">
-                      ECOM3401
-                    </span>
-                    DB
-                  </Space>
-                </Option>
-                <Option value="ECOM3302" label="Java 2">
-                  <Space>
-                    <span role="img" aria-label="Java 2" className="text-xs">
-                      ECOM3302
-                    </span>
-                    Java 2
-                  </Space>
-                </Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="room_number"
-              label="Room Number"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select room_number!",
-                },
-              ]}
-            >
-              <Select placeholder="select Room Number" size="large">
-                <Option value="room1">Room 1</Option>
-                <Option value="room2">Room 2</Option>
-                <Option value="room3">Room 3</Option>
-                <Option value="room4">Room 4</Option>
-              </Select>
-            </Form.Item> */}
-
             <Form.Item className="">
               <Button
                 type="primary"
@@ -368,7 +328,7 @@ const Courses = () => {
                 size="large"
                 className="w-full "
               >
-                Add Course
+                Add Classroom
               </Button>
             </Form.Item>
           </Form>
@@ -378,4 +338,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Classrooms;

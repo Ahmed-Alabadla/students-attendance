@@ -42,9 +42,6 @@ section {
 .ant-menu li:first-child {
   margin-bottom: 3.5rem;
 }
-.ant-menu li:last-child {
-  margin-bottom: 3.5rem;
-}
 
 #register div:last-child .ant-form-item-row {
   justify-content: center;
@@ -71,4 +68,13 @@ section {
 }
 .ant-tabs-tab-btn {
   font-weight: 500;
+}
+
+.ant-card-meta-title {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+}
+
+.red-row {
+  background-color: #ffcccc;
 }

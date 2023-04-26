@@ -2,18 +2,22 @@ import React, { useEffect } from "react";
 
 import {
   ArrowRightOutlined,
+  DashboardOutlined,
   EyeFilled,
   HomeOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { CgPlayListAdd } from "react-icons/cg";
 import { SiGooglesheets, SiGoogleclassroom } from "react-icons/si";
 
-import { Avatar, Breadcrumb, Layout, Menu, Tooltip } from "antd";
+import { Avatar, Breadcrumb, Button, Layout, Menu, Tooltip } from "antd";
 
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Header } from "antd/es/layout/layout";
 
 const { Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -27,7 +31,6 @@ function getItem(label, key, icon, children) {
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-
   const route = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,8 +38,12 @@ const Sidebar = () => {
       route("/login");
     }
   }, []);
+
   // ------------------------------------------
-  const items = [
+
+  const type_user = localStorage.getItem("type");
+
+  const items_assistant = [
     getItem(
       <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
         <button
@@ -52,64 +59,145 @@ const Sidebar = () => {
 
     getItem(
       <button onClick={() => route("/")} className="w-full text-start">
-        Show
+        Dashboard
       </button>,
       "1",
       <EyeFilled style={{ fontSize: "22px" }} onClick={() => route("/")} />
     ),
 
     getItem(
-      <button onClick={() => route("add-assistant")}>Add Assistant / I</button>,
-      "add-assistant",
-      <UserAddOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("add-assistant")}
-      />
+      <button onClick={() => route("sections")}>Sections</button>,
+      "sections",
+      <CgPlayListAdd size={30} onClick={() => route("sections")} />
     ),
+
     getItem(
-      <button onClick={() => route("add-instructor")}>
-        Add Instructor / A
-      </button>,
-      "add-instructor",
-      <UserAddOutlined
+      <button onClick={() => route("attendances")}>Attendances</button>,
+      "attendances",
+      <EyeFilled
         style={{ fontSize: "22px" }}
-        onClick={() => route("add-instructor")}
-      />
-    ),
-    getItem(
-      <button onClick={() => route("add-students")}>Add Students / A</button>,
-      "add-students",
-      <UsergroupAddOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("add-student")}
+        onClick={() => route("attendances")}
       />
     ),
 
-    getItem("Add Course / A", "3", <CgPlayListAdd size={30} />),
     getItem(
-      <button onClick={() => route("add-section")}>Add Section / TA</button>,
-      "4",
-      <CgPlayListAdd size={30} onClick={() => route("add-section")} />
-    ),
-
-    getItem("Add class room /A", "6", <SiGoogleclassroom size={25} />),
-    getItem(
-      "Attendance sheets",
+      "Export Reports",
       "7",
       <SiGooglesheets style={{ fontSize: "22px" }} />
     ),
-    // getItem("Export Reports", "8", <CiExport size={28} />),
+  ];
+
+  const items_instructor = [
+    getItem(
+      <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
+        <button
+          onClick={() => route("profile")}
+          className="positionArrow flex justify-between items-center w-full"
+        >
+          <p className="hiddenName text-lg ">Ahmed Alabadla</p>
+          <ArrowRightOutlined style={{ fontSize: "22px" }} />
+        </button>
+      </Tooltip>,
+      "profile"
+    ),
+
+    getItem(
+      <button onClick={() => route("/")} className="w-full text-start">
+        Dashboard
+      </button>,
+      "1",
+      <DashboardOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("/")}
+      />
+    ),
+
+    getItem(
+      <button onClick={() => route("assistants")}>Assistants</button>,
+      "assistants",
+      <UserAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("assistants")}
+      />
+    ),
+    getItem(
+      <button onClick={() => route("attendances")}>Attendances</button>,
+      "attendances",
+      <EyeFilled
+        style={{ fontSize: "22px" }}
+        onClick={() => route("attendances")}
+      />
+    ),
+  ];
+
+  const items_admin = [
+    getItem(
+      <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
+        <button
+          onClick={() => route("profile")}
+          className="positionArrow flex justify-between items-center w-full"
+        >
+          <p className="hiddenName text-lg ">Ahmed Alabadla</p>
+          <ArrowRightOutlined style={{ fontSize: "22px" }} />
+        </button>
+      </Tooltip>,
+      "profile"
+    ),
+
+    getItem(
+      <button onClick={() => route("/")} className="w-full text-start">
+        Dashboard
+      </button>,
+      "1",
+      <DashboardOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("/")}
+      />
+    ),
+
+    getItem(
+      <button onClick={() => route("instructors")}>Instructors</button>,
+      "instructors",
+      <UserAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("instructors")}
+      />
+    ),
+    getItem(
+      <button onClick={() => route("students")}>Students</button>,
+      "students",
+      <UsergroupAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("students")}
+      />
+    ),
+
+    getItem(
+      <button onClick={() => route("courses")}>Courses</button>,
+      "courses",
+      <CgPlayListAdd size={30} onClick={() => route("courses")} />
+    ),
+
+    getItem(
+      <button onClick={() => route("classrooms")}>Classrooms</button>,
+      "classrooms",
+      <SiGoogleclassroom size={25} onClick={() => route("classrooms")} />
+    ),
   ];
 
   // ------------------------------------
 
   const breadcrumbNameMap = {
     "/profile": "Profile",
-    "/add-section": "Add Section",
-    "/add-course": "Add Course",
-    "/add-assistant": "Add Assistant",
-    "/add-instructor": "Add Instructor",
-    "/add-students": "Add Students",
+    "/sections": "Sections",
+    "/courses": "Courses",
+    "/assistants": "Assistants",
+    "/instructors": "Instructors",
+    "/students": "Students",
+    "/classrooms": "Classrooms",
+    "/attendances": "Attendances",
+    "/show-attendances": "Show Attendances",
+    "/record-attendance": "Record Attendance",
   };
 
   const pathSnippets = window.location.pathname.split("/").filter((i) => i);
@@ -141,6 +229,7 @@ const Sidebar = () => {
         collapsible
         breakpoint="lg"
         collapsed={collapsed}
+        trigger={null}
         onCollapse={(value) => {
           setCollapsed(value);
         }}
@@ -168,16 +257,41 @@ const Sidebar = () => {
             pathSnippets.join().length > 0 ? pathSnippets.join() : "1"
           }
           mode="inline"
-          items={items}
+          items={
+            type_user === "admin"
+              ? items_admin
+              : type_user === "instructor"
+              ? items_instructor
+              : items_assistant
+          }
           className="flex flex-col gap-1 text-lg"
         />
       </Sider>
-      <Layout className="container">
-        <Breadcrumb
-          items={breadcrumbItems}
-          className="bg-[#E6F4FF] px-4 py-3 rounded-lg mt-14 mb-10 text-base "
-        />
-        <Outlet />
+      <Layout>
+        <Header
+          style={{
+            padding: 0,
+            background: "white",
+          }}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
+          />
+        </Header>
+        <Layout className="container">
+          <Breadcrumb
+            items={breadcrumbItems}
+            className="bg-[#E6F4FF] px-4 py-3 rounded-lg mt-5 mb-14 text-base"
+          />
+          <Outlet />
+        </Layout>
       </Layout>
     </>
   );
