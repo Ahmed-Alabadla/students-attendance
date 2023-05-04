@@ -78,3 +78,7 @@ section {
 .red-row {
   background-color: #ffcccc;
 }
+
+.ant-upload {
+  width: 100%;
+}

@@ -1,9 +1,15 @@
-import { Button, Form, Input, Select, Tabs } from "antd";
+import { Button, Form, Input, Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import QRScanner from "./QRScanner";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import api from "./api";
+import ImportAttendance from "./ImportAttendance";
 
 const RecordAttendance = () => {
+  const token = localStorage.getItem("token");
+
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -23,9 +29,47 @@ const RecordAttendance = () => {
     },
   };
   const [form] = Form.useForm();
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     console.log("Received values of form: ", values);
     form.resetFields();
+    await api
+      .post(
+        "attendances",
+        { student_number: values.student_number, section_id: 26 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            Accept: "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        toast.success(`${res.data.message} - ${values.student_number}`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      });
   };
 
   return (
@@ -75,9 +119,10 @@ const RecordAttendance = () => {
             </Button>
           </Form.Item>
         </Form>
+        <ToastContainer />
       </TabPane>
-      <TabPane tab="Export Data" key="3">
-        Content of Tab Pane 3
+      <TabPane tab="Import Data" key="3">
+        <ImportAttendance />
       </TabPane>
     </Tabs>
   );

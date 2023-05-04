@@ -3,12 +3,13 @@ import React, { useEffect } from "react";
 import {
   ArrowRightOutlined,
   DashboardOutlined,
-  EyeFilled,
+  EyeOutlined,
   HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserAddOutlined,
   UsergroupAddOutlined,
+  AppstoreAddOutlined,
 } from "@ant-design/icons";
 import { CgPlayListAdd } from "react-icons/cg";
 import { SiGooglesheets, SiGoogleclassroom } from "react-icons/si";
@@ -62,19 +63,25 @@ const Sidebar = () => {
         Dashboard
       </button>,
       "1",
-      <EyeFilled style={{ fontSize: "22px" }} onClick={() => route("/")} />
+      <DashboardOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("/")}
+      />
     ),
 
     getItem(
       <button onClick={() => route("sections")}>Sections</button>,
       "sections",
-      <CgPlayListAdd size={30} onClick={() => route("sections")} />
+      <AppstoreAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("sections")}
+      />
     ),
 
     getItem(
       <button onClick={() => route("attendances")}>Attendances</button>,
       "attendances",
-      <EyeFilled
+      <EyeOutlined
         style={{ fontSize: "22px" }}
         onClick={() => route("attendances")}
       />
@@ -123,7 +130,7 @@ const Sidebar = () => {
     getItem(
       <button onClick={() => route("attendances")}>Attendances</button>,
       "attendances",
-      <EyeFilled
+      <EyeOutlined
         style={{ fontSize: "22px" }}
         onClick={() => route("attendances")}
       />
@@ -235,7 +242,7 @@ const Sidebar = () => {
         }}
         theme="light"
       >
-        <button className="text-center text-3xl font-medium mt-5 text-[#008ecc] font-signature">
+        <button className="text-center text-2xl font-semibold w-full mt-5 text-[#008ecc] font-signature">
           {collapsed ? "LOGO" : "Students Attendance"}
         </button>
 
