@@ -26,7 +26,7 @@ const formItemLayout = {
 const Attendances = () => {
   const route = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       route("/login");
     }
@@ -109,24 +109,24 @@ const Attendances = () => {
         </Form.Item>
 
         <Form.Item
-          name="room_number"
-          label="Room Number"
+          name="section"
+          label="Section "
           rules={[
             {
               required: true,
-              message: "Please select room_number!",
+              message: "Please select section!",
             },
           ]}
         >
-          <Select placeholder="select Room Number" size="large">
-            <Option value="room1">Room 1</Option>
-            <Option value="room2">Room 2</Option>
-            <Option value="room3">Room 3</Option>
-            <Option value="room4">Room 4</Option>
+          <Select placeholder="select Section " size="large">
+            <Option value="101">101</Option>
+            <Option value="102">102</Option>
+            <Option value="103">103</Option>
+            <Option value="104">104</Option>
           </Select>
         </Form.Item>
 
-        <Form.Item className="">
+        <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
           <Button
             type="primary"
             htmlType="submit"

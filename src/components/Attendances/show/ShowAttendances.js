@@ -30,7 +30,7 @@ const data = [
 const ShowAttendances = () => {
   const route = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       route("/login");
     }
@@ -191,18 +191,39 @@ const ShowAttendances = () => {
       return "red-row";
     }
   };
+
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(false);
+
+  // Handle page change event
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
         Show Attendances
       </p>
       <Table
-        // loading={true}
-        className="w-full "
+        rowClassName={rowClassName}
+        className="w-full mt-5"
         columns={columns}
         dataSource={data}
+        loading={loading}
         bordered
-        rowClassName={rowClassName}
+        pagination={{
+          pageSize: pageSize,
+          // showSizeChanger: true,
+          showSizeChanger: true,
+          current: currentPage,
+          onChange: handlePageChange, // Handle page change event
+          onShowSizeChange: handlePageChange, // Handle page size change event
+          pageSizeOptions: ["5", "10", "20", "50"],
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+        }}
         scroll={{
           x: 500,
         }}

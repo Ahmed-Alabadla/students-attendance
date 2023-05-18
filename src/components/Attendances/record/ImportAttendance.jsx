@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
-import { Button, Upload, message } from "antd";
+import { Button, Upload } from "antd";
 
 const ImportAttendance = () => {
   const [fileList, setFileList] = useState([]);

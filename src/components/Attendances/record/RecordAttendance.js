@@ -1,14 +1,14 @@
 import { Button, Form, Input, Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import QRScanner from "./QRScanner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "./api";
+import api from "../../api";
 import ImportAttendance from "./ImportAttendance";
 
 const RecordAttendance = () => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const formItemLayout = {
     labelCol: {
@@ -35,7 +35,7 @@ const RecordAttendance = () => {
     await api
       .post(
         "attendances",
-        { student_number: values.student_number, section_id: 26 },
+        { student_number: values.student_number, lecture_id: 28 },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -108,7 +108,7 @@ const RecordAttendance = () => {
             <Input size="large" placeholder="ex: 12020xxxx" />
           </Form.Item>
 
-          <Form.Item className="">
+          <Form.Item cclassName="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
             <Button
               type="primary"
               htmlType="submit"

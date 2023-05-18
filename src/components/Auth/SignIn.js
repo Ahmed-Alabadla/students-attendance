@@ -3,8 +3,10 @@ import { LockOutlined } from "@ant-design/icons";
 import { HiOutlineMail } from "react-icons/hi";
 import { Button, Form, Input, Modal, Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
-import api from "./api";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/userSlice";
 
 const info = () => {
   Modal.info({
@@ -22,8 +24,9 @@ const info = () => {
 
 const SignIn = () => {
   const route = useNavigate();
+  const dispatch = useDispatch();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       route("/");
     }
@@ -33,7 +36,7 @@ const SignIn = () => {
   const [form_assistant] = Form.useForm();
   const [loadingAssistant, setLoadingAssistant] = useState(false);
   const [errorAssistant, setErrorAssistant] = useState(false);
-  // localStorage.clear();
+  // sessionStorage.clear();
   const login_assistant = (values) => {
     setLoadingAssistant(true);
     const data = { ...values, type: "assistant" };
@@ -47,8 +50,11 @@ const SignIn = () => {
         },
       })
       .then((res) => {
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("type", res.data.data.type);
+        sessionStorage.setItem("token", res.data.data.token);
+        sessionStorage.setItem("type", res.data.data.type);
+        dispatch(setUser(res.data.data.assistant));
+        sessionStorage.setItem("name", res.data.data.assistant.name);
+        sessionStorage.setItem("email", res.data.data.assistant.email);
         setLoadingAssistant(false);
         setErrorAssistant(false);
         form_assistant.resetFields();
@@ -57,39 +63,6 @@ const SignIn = () => {
       .catch((err) => {
         setLoadingAssistant(false);
         setErrorAssistant(true);
-      });
-  };
-
-  // ------------form_instructor--------------------
-  const [form_instructor] = Form.useForm();
-  const [loadingInstructor, setLoadingInstructor] = useState(false);
-  const [errorInstructor, setErrorInstructor] = useState(false);
-
-  const login_instructor = (values) => {
-    setLoadingInstructor(true);
-    const data = { ...values, type: "instructor" };
-    // console.log("Received values of form -- instructor: ", data);
-
-    api
-      .post("login", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "application/json",
-        },
-      })
-      .then((res) => {
-        // console.log(res.data);
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("type", res.data.data.type);
-
-        setLoadingInstructor(false);
-        setErrorInstructor(false);
-        form_instructor.resetFields();
-        route("/");
-      })
-      .catch((err) => {
-        setLoadingInstructor(false);
-        setErrorInstructor(true);
       });
   };
 
@@ -110,9 +83,12 @@ const SignIn = () => {
         },
       })
       .then((res) => {
-        // console.log(res.data);
-        localStorage.setItem("token", res.data.data.token);
-        localStorage.setItem("type", res.data.data.type);
+        console.log(res.data);
+        sessionStorage.setItem("token", res.data.data.token);
+        sessionStorage.setItem("type", res.data.data.type);
+        dispatch(setUser(res.data.data.admin));
+        sessionStorage.setItem("name", res.data.data.admin.name);
+        sessionStorage.setItem("email", res.data.data.admin.email);
 
         setLoadingAdmin(false);
         setErrorAdmin(false);
@@ -150,6 +126,7 @@ const SignIn = () => {
                 <Form.Item
                   name="email"
                   className="mb-10"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -170,6 +147,7 @@ const SignIn = () => {
                 <Form.Item
                   className="!mb-3"
                   name="password"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -211,7 +189,7 @@ const SignIn = () => {
               </Form>
             </TabPane>
             {/* ------Instructor------- */}
-            <TabPane tab="Instructor" key="2">
+            {/* <TabPane tab="Instructor" key="2">
               {errorInstructor && (
                 <div className="flex items-center justify-center w-full my-5 p-2.5 rounded-lg text-white bg-red-500 text-base">
                   Incorrect email or password.
@@ -226,6 +204,7 @@ const SignIn = () => {
                 <Form.Item
                   name="email"
                   className="mb-10"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -246,6 +225,7 @@ const SignIn = () => {
                 <Form.Item
                   className="!mb-3"
                   name="password"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -285,7 +265,7 @@ const SignIn = () => {
                   </Button>
                 </Form.Item>
               </Form>
-            </TabPane>
+            </TabPane> */}
             {/* ---------Admin--------- */}
             <TabPane tab="Admin" key="3">
               {errorAdmin && (
@@ -302,6 +282,7 @@ const SignIn = () => {
                 <Form.Item
                   name="email"
                   className="mb-10"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
@@ -322,6 +303,7 @@ const SignIn = () => {
                 <Form.Item
                   className=""
                   name="password"
+                  hasFeedback
                   rules={[
                     {
                       required: true,

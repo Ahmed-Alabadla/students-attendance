@@ -8,31 +8,46 @@ import {
   DeleteFilled,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import api from "../api";
+import AddSection from "./AddSection";
+import { ToastContainer } from "react-toastify";
 
 const data = [
   {
     id: "1",
-    name: "Room 1",
-    instructor: "Ahmed",
-    dept_name: "IT",
+    section: "101",
+    course: "DB",
+    total_student: "20",
   },
   {
     id: "2",
-    name: "Room 2",
-    instructor: "Ali",
-    dept_name: "IT",
+    section: "102",
+    course: "DB",
+    total_student: "30",
   },
   {
     id: "3",
-    name: "Room 3",
-    instructor: "Mohammed",
-    dept_name: "IT",
+    section: "103",
+    course: "DB",
+    total_student: "25",
+  },
+  {
+    id: "4",
+    section: "101",
+    course: "Java 1",
+    total_student: "40",
+  },
+  {
+    id: "5",
+    section: "102",
+    course: "Java 1",
+    total_student: "40",
   },
 ];
-const Classrooms = () => {
+const Sections = () => {
   const route = useNavigate();
+  const token = sessionStorage.getItem("token");
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       route("/login");
     }
@@ -152,24 +167,41 @@ const Classrooms = () => {
       // fixed: "left",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: "25%",
-      ...getColumnSearchProps("name"),
+      title: "Section number",
+      dataIndex: "number",
+      key: "number",
+      // width: "20%",
+      ...getColumnSearchProps("number"),
     },
     {
-      title: "Instructor",
-      dataIndex: "instructor",
-      key: "instructor",
-      width: "20%",
+      title: "Course",
+      dataIndex: "course_id",
+      key: "course_id",
+      sorter: (a, b) => a.course_id - b.course_id,
+      // sorter: (a, b) => a.course_id.localeCompare(b.course_id),
+      sortDirections: ["descend", "ascend"],
     },
-
     {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      width: "20%",
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+    },
+    {
+      title: "Semester",
+      dataIndex: "semester",
+      key: "semester",
+      render: (text) => (
+        <>
+          {text === "first" && "First semester"}
+          {text === "second" && "Second semester"}
+          {text === "summer" && "Summer semester"}
+        </>
+      ),
+    },
+    {
+      title: "Total Student",
+      dataIndex: "total_student",
+      key: "total_student",
     },
 
     {
@@ -194,41 +226,41 @@ const Classrooms = () => {
   ];
 
   // ----------------------------
-  const { Option } = Select;
-
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 6,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 17,
-      },
-    },
-  };
 
   const [showModal, setShowModal] = useState(false);
-  const handleCancel = () => {
-    setShowModal(false);
-  };
-  const [form] = Form.useForm();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-    form.resetFields();
+  const [tableData, setTableData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(false);
+
+  // Handle page change event
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
   };
 
+  useEffect(() => {
+    setLoading(true);
+    if (token) {
+      api
+        .get("sections", {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setTableData(res.data.data);
+          setLoading(false);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [token]);
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Classrooms
+        Sections
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -236,106 +268,39 @@ const Classrooms = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Classroom
+          Add Section
         </Button>
         <Table
           className="w-full mt-5"
           columns={columns}
-          dataSource={data}
+          dataSource={tableData}
+          loading={loading}
           bordered
+          pagination={{
+            pageSize: pageSize,
+            // showSizeChanger: true,
+            showSizeChanger: true,
+            current: currentPage,
+            onChange: handlePageChange, // Handle page change event
+            onShowSizeChange: handlePageChange, // Handle page size change event
+            pageSizeOptions: ["5", "10", "20", "50"],
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+          }}
           scroll={{
             x: 500,
           }}
         />
+        <ToastContainer />
         {/* -------Modal------- */}
-        <Modal
-          open={showModal}
-          onCancel={handleCancel}
-          footer={[]}
-          style={{
-            top: 35,
-          }}
-        >
-          <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Classroom
-          </p>
-          <Form
-            {...formItemLayout}
-            form={form}
-            name="register"
-            onFinish={onFinish}
-            className="mx-auto"
-            initialValues={{
-              prefix: "059",
-            }}
-            style={{
-              width: "100%",
-              maxWidth: 700,
-            }}
-            scrollToFirstError
-          >
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your name!",
-                },
-              ]}
-            >
-              <Input size="large" placeholder="Enter a Name" />
-            </Form.Item>
-
-            <Form.Item
-              name="courseID"
-              label="Course ID"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select course!",
-                },
-              ]}
-            >
-              <Select placeholder="select Course" size="large">
-                <Option value="ECOM3401">DB</Option>
-                <Option value="ECOM3302">Java 2</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="dept_name"
-              label="Department"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select Department!",
-                },
-              ]}
-            >
-              <Select placeholder="select Department" size="large">
-                <Option value="dept_1">Department 1</Option>
-                <Option value="dept_2">Department 2</Option>
-                <Option value="dept_3">Department 3</Option>
-                <Option value="dept_4">Department 4</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item className="">
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                className="w-full "
-              >
-                Add Classroom
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+        <AddSection
+          showModal={showModal}
+          setShowModal={setShowModal}
+          setTableData={setTableData}
+        />
       </div>
     </div>
   );
 };
 
-export default Classrooms;
+export default Sections;

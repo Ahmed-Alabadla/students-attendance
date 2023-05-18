@@ -1,42 +1,39 @@
 import { Button, Form, Input, Modal, Select, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  SearchOutlined,
-  DeleteFilled,
-  EditFilled,
-  EyeFilled,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
 const data = [
   {
     id: "1",
-    name: "Ahmed",
-    phone: "0597756451",
-    dept_name: "IT",
-    course_name: "sd",
+    name: "Introduction to SQL",
+    course: "DB",
+    year: "2021-2022",
+    semester: "first semester",
+    percent_attendance: "89%",
   },
   {
     id: "2",
-    name: "Ali",
-    phone: "0597756451",
-    dept_name: "Art",
-
-    course_name: "sgfs",
+    name: "Introduction to Classes",
+    course: "Java 1",
+    year: "2020-2021",
+    semester: "first semester",
+    percent_attendance: "100%",
   },
   {
     id: "3",
-    name: "Mohammed",
-    phone: "0597756451",
-    dept_name: "Computer Engineering",
-    course_name: "df",
+    name: "Introduction to JavaFx",
+    course: "Java 2",
+    year: "2020-2021",
+    semester: "second semester",
+    percent_attendance: "80%",
   },
 ];
-const Instructors = () => {
+const Lectures = () => {
   const route = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       route("/login");
     }
@@ -159,26 +156,36 @@ const Instructors = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "25%",
+      width: "20%",
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Phone number",
-      dataIndex: "phone",
-      key: "phone",
-      width: "20%",
-    },
-    {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      width: "20%",
-    },
-    {
       title: "Course",
-      dataIndex: "course_name",
-      key: "course_name",
-      width: "20%",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+      sorter: (a, b) => a.year.localeCompare(b.year),
+      sortDirections: ["descend", "ascend"],
+    },
+    {
+      title: "Semester",
+      dataIndex: "semester",
+      key: "semester",
+      sorter: (a, b) => a.semester.localeCompare(b.semester),
+      sortDirections: ["descend", "ascend"],
+    },
+
+    {
+      title: "Percentage Attendance",
+      dataIndex: "percent_attendance",
+      key: "percent_attendance",
+      sorter: (a, b) =>
+        a.percent_attendance.localeCompare(b.percent_attendance),
+      sortDirections: ["descend", "ascend"],
     },
 
     {
@@ -187,17 +194,7 @@ const Instructors = () => {
       // fixed: "right",
       // width: '10%',
       render: () => (
-        <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
-            <EditFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
-            <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-        </div>
+        <Button onClick={() => route("/record-attendance")}>Attendances</Button>
       ),
     },
   ];
@@ -211,7 +208,7 @@ const Instructors = () => {
         span: 24,
       },
       sm: {
-        span: 7,
+        span: 6,
       },
     },
     wrapperCol: {
@@ -219,7 +216,7 @@ const Instructors = () => {
         span: 24,
       },
       sm: {
-        span: 16,
+        span: 17,
       },
     },
   };
@@ -231,13 +228,23 @@ const Instructors = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    route("/record-attendance");
     form.resetFields();
   };
 
+  const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [pageSize, setPageSize] = useState(5);
+  const [loading, setLoading] = useState(false);
+
+  // Handle page change event
+  const handlePageChange = (page, pageSize) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+  };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
-        Instructors
+        Lectures
       </p>
       <div className="flex items-end flex-col">
         <Button
@@ -245,13 +252,25 @@ const Instructors = () => {
           className="w-fit"
           onClick={() => setShowModal(true)}
         >
-          Add Instructor
+          Add Lecture
         </Button>
         <Table
           className="w-full mt-5"
           columns={columns}
           dataSource={data}
+          loading={loading}
           bordered
+          pagination={{
+            pageSize: pageSize,
+            // showSizeChanger: true,
+            showSizeChanger: true,
+            current: currentPage,
+            onChange: handlePageChange, // Handle page change event
+            onShowSizeChange: handlePageChange, // Handle page size change event
+            pageSizeOptions: ["5", "10", "20", "50"],
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+          }}
           scroll={{
             x: 500,
           }}
@@ -266,7 +285,7 @@ const Instructors = () => {
           }}
         >
           <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Add Instructor
+            Add Lecture
           </p>
           <Form
             {...formItemLayout}
@@ -274,9 +293,6 @@ const Instructors = () => {
             name="register"
             onFinish={onFinish}
             className="mx-auto"
-            initialValues={{
-              prefix: "059",
-            }}
             style={{
               width: "100%",
               maxWidth: 700,
@@ -284,114 +300,16 @@ const Instructors = () => {
             scrollToFirstError
           >
             <Form.Item
-              name="fullname"
-              label="Full Name"
+              name="lecture_name"
+              label="Lecture Name"
               rules={[
                 {
                   required: true,
-                  message: "Please input your fullname!",
+                  message: "Please input your lecture name!",
                 },
               ]}
             >
-              <Input size="large" placeholder="Enter a Full Name" />
-            </Form.Item>
-
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Email!",
-                },
-                {
-                  type: "email",
-                  message: "The input is not valid E-mail!",
-                },
-              ]}
-            >
-              <Input placeholder="Enter an email" size="large" />
-            </Form.Item>
-
-            <Form.Item
-              name="password"
-              label="Password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your password!",
-                },
-                {
-                  pattern: "^.{8,20}$",
-                  message:
-                    "Please enter a password between 8 and 20 characters long.",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password size="large" placeholder="Enter a password" />
-            </Form.Item>
-
-            <Form.Item
-              name="confirm_password"
-              label="Confirm Password"
-              dependencies={["password"]}
-              hasFeedback
-              rules={[
-                {
-                  required: true,
-                  message: "Please confirm your password!",
-                },
-
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(
-                        "The two passwords that you entered do not match!"
-                      )
-                    );
-                  },
-                }),
-              ]}
-            >
-              <Input.Password
-                size="large"
-                placeholder="Enter a confirm password"
-              />
-            </Form.Item>
-
-            <Form.Item label="Phone number">
-              <Input.Group compact className="!flex">
-                <Form.Item
-                  name={["phone_number", "prefix"]}
-                  noStyle
-                  initialValue={"059"}
-                >
-                  <Select size="large">
-                    <Option value="059">059</Option>
-                    <Option value="056">056</Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name={["phone_number", "phone"]}
-                  noStyle
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your phone number!",
-                    },
-                    {
-                      pattern: "^[0-9]{7}$",
-                      message: "Please enter a valid 7-digit phone number.",
-                    },
-                  ]}
-                >
-                  <Input size="large" placeholder="Enter a phone number" />
-                </Form.Item>
-              </Input.Group>
+              <Input size="large" placeholder="Enter a lecture name" />
             </Form.Item>
 
             <Form.Item
@@ -410,14 +328,67 @@ const Instructors = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item className="">
+            <Form.Item
+              name="section"
+              label="Section "
+              rules={[
+                {
+                  required: true,
+                  message: "Please select section!",
+                },
+              ]}
+            >
+              <Select placeholder="select Section " size="large">
+                <Option value="101">101</Option>
+                <Option value="102">102</Option>
+                <Option value="103">103</Option>
+                <Option value="104">104</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="year"
+              label="Year"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select year!",
+                },
+              ]}
+            >
+              <Select placeholder="select year" size="large">
+                <Option value="2023_2024">2023-2024</Option>
+                <Option value="2022_2023">2022-2023</Option>
+                <Option value="2021_2022">2021-2022</Option>
+                <Option value="2020_2021">2020-2021</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="semester"
+              label="Semester"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select semester!",
+                },
+              ]}
+            >
+              <Select placeholder="select semester" size="large">
+                <Option value="first_semester">First Semester</Option>
+                <Option value="first_semester">Second Semester</Option>
+                <Option value="summer_semester">Summer Semester</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
               <Button
                 type="primary"
                 htmlType="submit"
                 size="large"
                 className="w-full "
               >
-                Register
+                Add lecture
               </Button>
             </Form.Item>
           </Form>
@@ -427,4 +398,4 @@ const Instructors = () => {
   );
 };
 
-export default Instructors;
+export default Lectures;

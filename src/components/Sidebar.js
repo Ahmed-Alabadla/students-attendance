@@ -19,6 +19,7 @@ import { Avatar, Breadcrumb, Button, Layout, Menu, Tooltip } from "antd";
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
+import { useSelector } from "react-redux";
 
 const { Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -31,10 +32,13 @@ function getItem(label, key, icon, children) {
 }
 
 const Sidebar = () => {
+  const user = useSelector((state) => state.userDetails.user);
+  const firstLetter = user.name?.charAt(0);
+  // --------------------------------------------
   const [collapsed, setCollapsed] = useState(false);
   const route = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
       route("/login");
     }
@@ -42,7 +46,7 @@ const Sidebar = () => {
 
   // ------------------------------------------
 
-  const type_user = localStorage.getItem("type");
+  const type_user = sessionStorage.getItem("type");
 
   const items_assistant = [
     getItem(
@@ -51,7 +55,7 @@ const Sidebar = () => {
           onClick={() => route("profile")}
           className="positionArrow flex justify-between items-center w-full"
         >
-          <p className="hiddenName text-lg ">Ahmed Alabadla</p>
+          <p className="hiddenName text-lg ">{user.name}</p>
           <ArrowRightOutlined style={{ fontSize: "22px" }} />
         </button>
       </Tooltip>,
@@ -70,11 +74,11 @@ const Sidebar = () => {
     ),
 
     getItem(
-      <button onClick={() => route("sections")}>Sections</button>,
-      "sections",
+      <button onClick={() => route("lectures")}>Lectures</button>,
+      "lectures",
       <AppstoreAddOutlined
         style={{ fontSize: "22px" }}
-        onClick={() => route("sections")}
+        onClick={() => route("lectures")}
       />
     ),
 
@@ -94,49 +98,6 @@ const Sidebar = () => {
     ),
   ];
 
-  const items_instructor = [
-    getItem(
-      <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
-        <button
-          onClick={() => route("profile")}
-          className="positionArrow flex justify-between items-center w-full"
-        >
-          <p className="hiddenName text-lg ">Ahmed Alabadla</p>
-          <ArrowRightOutlined style={{ fontSize: "22px" }} />
-        </button>
-      </Tooltip>,
-      "profile"
-    ),
-
-    getItem(
-      <button onClick={() => route("/")} className="w-full text-start">
-        Dashboard
-      </button>,
-      "1",
-      <DashboardOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("/")}
-      />
-    ),
-
-    getItem(
-      <button onClick={() => route("assistants")}>Assistants</button>,
-      "assistants",
-      <UserAddOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("assistants")}
-      />
-    ),
-    getItem(
-      <button onClick={() => route("attendances")}>Attendances</button>,
-      "attendances",
-      <EyeOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("attendances")}
-      />
-    ),
-  ];
-
   const items_admin = [
     getItem(
       <Tooltip title="Go to Profile" placement="right" color={"#008ecc"}>
@@ -144,7 +105,7 @@ const Sidebar = () => {
           onClick={() => route("profile")}
           className="positionArrow flex justify-between items-center w-full"
         >
-          <p className="hiddenName text-lg ">Ahmed Alabadla</p>
+          <p className="hiddenName text-lg ">{user.name}</p>
           <ArrowRightOutlined style={{ fontSize: "22px" }} />
         </button>
       </Tooltip>,
@@ -170,6 +131,16 @@ const Sidebar = () => {
         onClick={() => route("instructors")}
       />
     ),
+
+    getItem(
+      <button onClick={() => route("assistants")}>Assistants</button>,
+      "assistants",
+      <UserAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("assistants")}
+      />
+    ),
+
     getItem(
       <button onClick={() => route("students")}>Students</button>,
       "students",
@@ -186,9 +157,18 @@ const Sidebar = () => {
     ),
 
     getItem(
-      <button onClick={() => route("classrooms")}>Classrooms</button>,
-      "classrooms",
-      <SiGoogleclassroom size={25} onClick={() => route("classrooms")} />
+      <button onClick={() => route("sections")}>Sections</button>,
+      "sections",
+      <AppstoreAddOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("sections")}
+      />
+    ),
+
+    getItem(
+      <button onClick={() => route("rooms")}>Rooms</button>,
+      "rooms",
+      <SiGoogleclassroom size={25} onClick={() => route("rooms")} />
     ),
   ];
 
@@ -198,10 +178,11 @@ const Sidebar = () => {
     "/profile": "Profile",
     "/sections": "Sections",
     "/courses": "Courses",
+    "/lectures": "Lectures",
     "/assistants": "Assistants",
     "/instructors": "Instructors",
     "/students": "Students",
-    "/classrooms": "Classrooms",
+    "/rooms": "Rooms",
     "/attendances": "Attendances",
     "/show-attendances": "Show Attendances",
     "/record-attendance": "Record Attendance",
@@ -242,7 +223,10 @@ const Sidebar = () => {
         }}
         theme="light"
       >
-        <button className="text-center text-2xl font-semibold w-full mt-5 text-[#008ecc] font-signature">
+        <button
+          onClick={() => route("/")}
+          className="text-center text-2xl font-semibold w-full mt-5 text-[#008ecc] font-signature"
+        >
           {collapsed ? "LOGO" : "Students Attendance"}
         </button>
 
@@ -253,7 +237,7 @@ const Sidebar = () => {
               className="flex items-center justify-center bg-red-500 text-2xl"
               size="large"
             >
-              A
+              {firstLetter}
             </Avatar>
           </button>
         </div>
@@ -264,13 +248,7 @@ const Sidebar = () => {
             pathSnippets.join().length > 0 ? pathSnippets.join() : "1"
           }
           mode="inline"
-          items={
-            type_user === "admin"
-              ? items_admin
-              : type_user === "instructor"
-              ? items_instructor
-              : items_assistant
-          }
+          items={type_user === "admin" ? items_admin : items_assistant}
           className="flex flex-col gap-1 text-lg"
         />
       </Sider>
