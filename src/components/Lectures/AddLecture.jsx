@@ -1,16 +1,17 @@
-import { Button, DatePicker, Form, Modal, Select } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat);
+import { useDispatch } from "react-redux";
+import { setLectureId } from "../../redux/lectureSlice";
+import { useNavigate } from "react-router-dom";
 
-const AssignCourseToInstructor = ({
-  showModalAssignCourse,
-  setShowModalAssignCourse,
-  instructor_id,
+const AddLecture = ({
+  showModal,
+  setShowModal,
+  // setTableData
 }) => {
   // ----------------------------
   const { Option } = Select;
@@ -21,7 +22,7 @@ const AssignCourseToInstructor = ({
         span: 24,
       },
       sm: {
-        span: 7,
+        span: 5,
       },
     },
     wrapperCol: {
@@ -29,23 +30,33 @@ const AssignCourseToInstructor = ({
         span: 24,
       },
       sm: {
-        span: 16,
+        span: 18,
       },
     },
   };
+
+  // eslint-disable-next-line arrow-body-style
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < dayjs().endOf("day");
+  };
+
+  const dispatch = useDispatch();
+  const route = useNavigate();
 
   const token = sessionStorage.getItem("token");
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
     const data = {
-      instructor_id: instructor_id,
+      title: values.title,
       course_id: values.course_id,
       semester: values.semester,
       year: `${values.year.$y}-${values.year.$y + 1}`,
+      section_id: values.section_id,
     };
     api
-      .post("teaches", data, {
+      .post("lectures", data, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -53,7 +64,9 @@ const AssignCourseToInstructor = ({
         },
       })
       .then((res) => {
-        console.log(res.data);
+        dispatch(setLectureId(res.data.data.id));
+        sessionStorage.setItem("lecture_id", res.data.data.id);
+
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -65,7 +78,11 @@ const AssignCourseToInstructor = ({
           theme: "colored",
         });
         form.resetFields();
-        setShowModalAssignCourse(false);
+        setShowModal(false);
+        // setTableData((prev) => {
+        //   return [...prev, res.data.data];
+        // });
+        route("/record-attendance");
       })
       .catch((err) => {
         console.log(err);
@@ -81,7 +98,7 @@ const AssignCourseToInstructor = ({
           theme: "colored",
         });
       });
-    // console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", data);
   };
 
   // ----------courses------------------
@@ -104,16 +121,31 @@ const AssignCourseToInstructor = ({
     }
   }, [token]);
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
+  // ----------Sections in course------------------
+
+  const [sectionList, setSectionList] = useState([]);
+  const [course_id, setCourse_id] = useState();
+  useEffect(() => {
+    if (token) {
+      api
+        .get(`sections?course_id=${course_id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setSectionList(res.data.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [course_id, token]);
   return (
     <Modal
-      open={showModalAssignCourse}
+      open={showModal}
       onCancel={() => {
-        setShowModalAssignCourse(false);
+        setShowModal(false);
         form.resetFields();
       }}
       footer={[]}
@@ -122,7 +154,7 @@ const AssignCourseToInstructor = ({
       }}
     >
       <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-        Assign course
+        Add Lecture
       </p>
       <Form
         {...formItemLayout}
@@ -136,6 +168,19 @@ const AssignCourseToInstructor = ({
         scrollToFirstError
       >
         <Form.Item
+          name="title"
+          label="Title"
+          rules={[
+            {
+              required: true,
+              message: "Please input your title!",
+            },
+          ]}
+        >
+          <Input size="large" placeholder="Enter a title" />
+        </Form.Item>
+
+        <Form.Item
           name="course_id"
           label="Course "
           rules={[
@@ -145,9 +190,34 @@ const AssignCourseToInstructor = ({
             },
           ]}
         >
-          <Select placeholder="select Course" size="large">
+          <Select
+            placeholder="select Course"
+            size="large"
+            onChange={(value) => setCourse_id(value)}
+          >
             {coursesList.map((item) => (
-              <Option value={item.id}>{item.title}</Option>
+              <Option value={item.id} key={item.id}>
+                {item.title}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="section_id"
+          label="Section "
+          rules={[
+            {
+              required: true,
+              message: "Please select section!",
+            },
+          ]}
+        >
+          <Select placeholder="select Section " size="large">
+            {sectionList.map((item) => (
+              <Option value={item.id} key={item.id}>
+                {item.number}
+              </Option>
             ))}
           </Select>
         </Form.Item>
@@ -195,7 +265,7 @@ const AssignCourseToInstructor = ({
             size="large"
             className="w-full "
           >
-            Assign
+            Add
           </Button>
         </Form.Item>
       </Form>
@@ -203,4 +273,4 @@ const AssignCourseToInstructor = ({
   );
 };
 
-export default AssignCourseToInstructor;
+export default AddLecture;

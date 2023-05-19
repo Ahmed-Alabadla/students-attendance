@@ -57,7 +57,8 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
       .catch((err) => {
         console.log(err);
 
-        toast.error("Email has already been taken", {
+        // toast.error("Email has already been taken", {
+        toast.error(err.response.data.message, {
           position: "bottom-left",
           autoClose: 5000,
           hideProgressBar: false,
@@ -73,7 +74,10 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
   return (
     <Modal
       open={showModalAdd}
-      onCancel={() => setShowModalAdd(false)}
+      onCancel={() => {
+        setShowModalAdd(false);
+        formAdd.resetFields();
+      }}
       footer={[]}
       style={{
         top: 35,

@@ -28,6 +28,9 @@ const Profile = () => {
         .then((res) => {
           sessionStorage.removeItem("token");
           sessionStorage.removeItem("type");
+          sessionStorage.removeItem("email");
+          sessionStorage.removeItem("lecture_id");
+          sessionStorage.removeItem("name");
           route("/login");
         });
     }

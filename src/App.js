@@ -3,7 +3,6 @@ import "./App.css";
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import Lectures from "./components/Lectures";
 import Students from "./components/Students/Students";
 import Profile from "./components/Auth/Profile";
 import SignIn from "./components/Auth/SignIn";
@@ -16,6 +15,7 @@ import RecordAttendance from "./components/Attendances/record/RecordAttendance";
 import QRScanner from "./components/Attendances/record/QRScanner";
 import Attendances from "./components/Attendances/show/Attendances";
 import ShowAttendances from "./components/Attendances/show/ShowAttendances";
+import Lectures from "./components/Lectures/Lectures";
 
 function App() {
   return (

@@ -111,7 +111,10 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
   return (
     <Modal
       open={showModal}
-      onCancel={() => setShowModal(false)}
+      onCancel={() => {
+        setShowModal(false);
+        form.resetFields();
+      }}
       footer={[]}
       style={{
         top: 35,

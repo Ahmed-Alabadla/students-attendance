@@ -3,11 +3,13 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import api from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 const QRScanner = () => {
   const [id, setId] = useState(null);
   const token = sessionStorage.getItem("token");
 
+  const { lecture_id } = useSelector((state) => state.lecture);
   useEffect(() => {
     if (!token) {
       return;
@@ -18,7 +20,7 @@ const QRScanner = () => {
         await api
           .post(
             "attendances",
-            { student_number: id, lecture_id: 6 },
+            { student_number: id, lecture_id: lecture_id },
             {
               headers: {
                 Authorization: `Bearer ${token}`,

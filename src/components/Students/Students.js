@@ -162,7 +162,7 @@ const Students = () => {
       key: "course",
       render: (record) => (
         // <Button onClick={() => setModalCoursesForStudent(true)}>Courses</Button>
-        <Button onClick={() => handleClickAssignCourse(record.id)}>
+        <Button onClick={() => handleClickAssignCourse(record.number)}>
           Assign Course
         </Button>
       ),
@@ -238,9 +238,9 @@ const Students = () => {
   const [showModalAssignCourse, setShowModalAssignCourse] = useState(false);
   const [student_number, setStudent_number] = useState();
 
-  const handleClickAssignCourse = (id) => {
+  const handleClickAssignCourse = (number) => {
     setShowModalAssignCourse(true);
-    setStudent_number(id);
+    setStudent_number(number);
   };
 
   // ---------------- Modal delete student -----------------

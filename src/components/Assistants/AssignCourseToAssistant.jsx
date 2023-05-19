@@ -112,7 +112,10 @@ const AssignCourseToAssistant = ({
   return (
     <Modal
       open={showModalAssignCourse}
-      onCancel={() => setShowModalAssignCourse(false)}
+      onCancel={() => {
+        setShowModalAssignCourse(false);
+        form.resetFields();
+      }}
       footer={[]}
       style={{
         top: 35,
@@ -160,9 +163,9 @@ const AssignCourseToAssistant = ({
           ]}
         >
           <Select placeholder="select semester" size="large">
-            <Option value="first_semester">First Semester</Option>
-            <Option value="second_semester">Second Semester</Option>
-            <Option value="summer_semester">Summer Semester</Option>
+            <Option value="first">First Semester</Option>
+            <Option value="second">Second Semester</Option>
+            <Option value="summer">Summer Semester</Option>
           </Select>
         </Form.Item>
 

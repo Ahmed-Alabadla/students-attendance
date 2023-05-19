@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../../api";
 import ImportAttendance from "./ImportAttendance";
+import { useSelector } from "react-redux";
 
 const RecordAttendance = () => {
   const token = sessionStorage.getItem("token");
@@ -28,6 +29,10 @@ const RecordAttendance = () => {
       },
     },
   };
+
+  const { lecture_id } = useSelector((state) => state.lecture);
+  console.log(lecture_id);
+
   const [form] = Form.useForm();
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
@@ -35,7 +40,7 @@ const RecordAttendance = () => {
     await api
       .post(
         "attendances",
-        { student_number: values.student_number, lecture_id: 28 },
+        { student_number: values.student_number, lecture_id: lecture_id },
         {
           headers: {
             Authorization: `Bearer ${token}`,

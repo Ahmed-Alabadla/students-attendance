@@ -60,7 +60,8 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
       .catch((err) => {
         console.log(err);
 
-        toast.error("Email has already been taken", {
+        // toast.error("Email has already been taken", {
+        toast.error(err.response.data.message, {
           position: "bottom-left",
           autoClose: 5000,
           hideProgressBar: false,
@@ -76,7 +77,10 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
   return (
     <Modal
       open={showModal}
-      onCancel={() => setShowModal(false)}
+      onCancel={() => {
+        setShowModal(false);
+        form.resetFields();
+      }}
       footer={[]}
       style={{
         top: 35,

@@ -10,21 +10,35 @@ const data = [
     name: "Ahmed",
     student_number: "120200956",
     total_attendance: "23/25",
-    percent_attendance: "92%",
+    percent_attendance: "100%",
   },
   {
     id: "2",
     name: "Mohammed",
     student_number: "120200370",
     total_attendance: "20/25",
-    percent_attendance: "80%",
+    percent_attendance: "30%",
   },
   {
     id: "3",
     name: "Ali",
     student_number: "120200670",
     total_attendance: "10/25",
-    percent_attendance: "40%",
+    percent_attendance: "80%",
+  },
+  {
+    id: "4",
+    name: "Ali",
+    student_number: "120200560",
+    total_attendance: "10/25",
+    percent_attendance: "99%",
+  },
+  {
+    id: "5",
+    name: "Ali",
+    student_number: "120201270",
+    total_attendance: "10/25",
+    percent_attendance: "74%",
   },
 ];
 const ShowAttendances = () => {
@@ -187,7 +201,7 @@ const ShowAttendances = () => {
   ];
 
   const rowClassName = (record, index) => {
-    if (record.percent_attendance < "50%") {
+    if (parseInt(record.percent_attendance) < 75) {
       return "red-row";
     }
   };

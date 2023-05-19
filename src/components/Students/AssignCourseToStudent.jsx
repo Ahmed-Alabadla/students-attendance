@@ -34,6 +34,12 @@ const AssignCourseToStudent = ({
     },
   };
 
+  // eslint-disable-next-line arrow-body-style
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return current && current < dayjs().endOf("day");
+  };
+
   const token = sessionStorage.getItem("token");
 
   const [form] = Form.useForm();
@@ -43,6 +49,7 @@ const AssignCourseToStudent = ({
       course_id: values.course_id,
       semester: values.semester,
       year: `${values.year.$y}-${values.year.$y + 1}`,
+      section_id: values.section_id,
     };
     api
       .post("takes", data, {
@@ -81,7 +88,7 @@ const AssignCourseToStudent = ({
           theme: "colored",
         });
       });
-    // console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", data);
   };
 
   // ----------courses------------------
@@ -104,15 +111,34 @@ const AssignCourseToStudent = ({
     }
   }, [token]);
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
+  // ----------Sections in course------------------
+
+  const [sectionList, setSectionList] = useState([]);
+  const [course_id, setCourse_id] = useState();
+  useEffect(() => {
+    if (token) {
+      api
+        .get(`sections?course_id=${course_id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setSectionList(res.data.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [course_id, token]);
+
   return (
     <Modal
       open={showModalAssignCourse}
-      onCancel={() => setShowModalAssignCourse(false)}
+      onCancel={() => {
+        setShowModalAssignCourse(false);
+        form.resetFields();
+      }}
       footer={[]}
       style={{
         top: 35,
@@ -142,9 +168,34 @@ const AssignCourseToStudent = ({
             },
           ]}
         >
-          <Select placeholder="select Course" size="large">
+          <Select
+            placeholder="select Course"
+            size="large"
+            onChange={(value) => setCourse_id(value)}
+          >
             {coursesList.map((item) => (
-              <Option value={item.id}>{item.title}</Option>
+              <Option value={item.id} key={item.id}>
+                {item.title}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="section_id"
+          label="Section "
+          rules={[
+            {
+              required: true,
+              message: "Please select section!",
+            },
+          ]}
+        >
+          <Select placeholder="select Section " size="large">
+            {sectionList.map((item) => (
+              <Option value={item.id} key={item.id}>
+                {item.number}
+              </Option>
             ))}
           </Select>
         </Form.Item>
@@ -160,9 +211,9 @@ const AssignCourseToStudent = ({
           ]}
         >
           <Select placeholder="select semester" size="large">
-            <Option value="first_semester">First Semester</Option>
-            <Option value="second_semester">Second Semester</Option>
-            <Option value="summer_semester">Summer Semester</Option>
+            <Option value="first">First Semester</Option>
+            <Option value="second">Second Semester</Option>
+            <Option value="summer">Summer Semester</Option>
           </Select>
         </Form.Item>
 
