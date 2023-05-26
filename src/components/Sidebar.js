@@ -62,16 +62,16 @@ const Sidebar = () => {
       "profile"
     ),
 
-    getItem(
-      <button onClick={() => route("/")} className="w-full text-start">
-        Dashboard
-      </button>,
-      "1",
-      <DashboardOutlined
-        style={{ fontSize: "22px" }}
-        onClick={() => route("/")}
-      />
-    ),
+    // getItem(
+    //   <button onClick={() => route("/")} className="w-full text-start">
+    //     Dashboard
+    //   </button>,
+    //   "1",
+    //   <DashboardOutlined
+    //     style={{ fontSize: "22px" }}
+    //     onClick={() => route("/")}
+    //   />
+    // ),
 
     getItem(
       <button onClick={() => route("lectures")}>Lectures</button>,
@@ -83,18 +83,12 @@ const Sidebar = () => {
     ),
 
     getItem(
-      <button onClick={() => route("attendances")}>Attendances</button>,
+      <button onClick={() => route("attendances")}>Reports</button>,
       "attendances",
       <EyeOutlined
         style={{ fontSize: "22px" }}
         onClick={() => route("attendances")}
       />
-    ),
-
-    getItem(
-      "Export Reports",
-      "7",
-      <SiGooglesheets style={{ fontSize: "22px" }} />
     ),
   ];
 

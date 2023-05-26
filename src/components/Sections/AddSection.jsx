@@ -40,6 +40,8 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
       semester: values.semester,
       year: `${values.year.$y}-${values.year.$y + 1}`,
     };
+    console.log(data);
+    console.log(values);
     api
       .post("sections", data, {
         headers: {
@@ -200,7 +202,7 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
           />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           name="room_number"
           label="Room Number"
           rules={
@@ -218,7 +220,7 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
             <Option value="room3">Room 3</Option>
             <Option value="room4">Room 4</Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
           <Button

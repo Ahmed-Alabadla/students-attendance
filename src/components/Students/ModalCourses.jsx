@@ -113,7 +113,7 @@ const ModalCourses = ({
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      width: 500,
+      width: 550,
       onOk() {
         console.log("OK");
 

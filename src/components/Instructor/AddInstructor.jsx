@@ -29,8 +29,14 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
 
   const [formAdd] = Form.useForm();
   const onFinish = (values) => {
+    const data = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone_number.prefix + values.phone_number.phone,
+    };
+
     api
-      .post("instructors", values, {
+      .post("instructors", data, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -56,7 +62,6 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
       })
       .catch((err) => {
         console.log(err);
-
         // toast.error("Email has already been taken", {
         toast.error(err.response.data.message, {
           position: "bottom-left",
@@ -69,7 +74,8 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
           theme: "colored",
         });
       });
-    // console.log("Received values of form: ", values);
+
+    // console.log("Received values of form: ", data);
   };
   return (
     <Modal
@@ -130,7 +136,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
           <Input placeholder="Enter an email" size="large" />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           name="password"
           label="Password"
           rules={[
@@ -173,7 +179,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
           ]}
         >
           <Input.Password size="large" placeholder="Enter a confirm password" />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item label="Phone number">
           <Input.Group compact className="!flex">
@@ -191,10 +197,10 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
               name={["phone_number", "phone"]}
               noStyle
               rules={[
-                // {
-                //   required: true,
-                //   message: "Please input your phone number!",
-                // },
+                {
+                  required: true,
+                  message: "Please input your phone number!",
+                },
                 {
                   pattern: "^[0-9]{7}$",
                   message: "Please enter a valid 7-digit phone number.",

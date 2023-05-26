@@ -8,13 +8,19 @@ import {
   SiReasonstudios,
 } from "react-icons/si";
 import { ImBook } from "react-icons/im";
-import { RiGovernmentFill } from "react-icons/ri";
 import api from "./api";
 
 const Dashboard = () => {
   const token = sessionStorage.getItem("token");
+  const type = sessionStorage.getItem("type");
   const [items, setItems] = useState({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (type === "assistant") {
+      window.location.replace("/lectures");
+    }
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -121,19 +127,6 @@ const Dashboard = () => {
               avatar={
                 <div className="p-2 bg-[#D2D6DE] rounded-lg mt-2">
                   <SiGoogleclassroom size={30} />
-                </div>
-              }
-            />
-          </Card>
-        </Col>
-        <Col span={24} sm={24} md={12} lg={8}>
-          <Card loading={loading}>
-            <Meta
-              title="10"
-              description={<p className="text-base">Total department</p>}
-              avatar={
-                <div className="p-2 bg-[#D2D6DE] rounded-lg mt-2">
-                  <RiGovernmentFill size={30} />
                 </div>
               }
             />

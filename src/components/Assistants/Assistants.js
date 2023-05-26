@@ -1,17 +1,19 @@
-import { Button, Input, Space, Table } from "antd";
+import { Button, Form, Input, Modal, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SearchOutlined,
-  EyeFilled,
   EditFilled,
   DeleteFilled,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import AddAssistant from "./AddAssistant";
 import api from "../api";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AssignCourseToAssistant from "./AssignCourseToAssistant";
+import EditAssistant from "./EditAssistant";
 
 const Assistants = () => {
   const route = useNavigate();
@@ -149,8 +151,8 @@ const Assistants = () => {
     },
     {
       title: "Phone Number",
-      dataIndex: "phone_number",
-      key: "phone_number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Course",
@@ -167,15 +169,18 @@ const Assistants = () => {
       key: "operation",
       // fixed: "right",
       // width: '10%',
-      render: () => (
+      render: (record) => (
         <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => handleClickEditAssistant(record)}
+            className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center"
+          >
             <EditFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => showDeleteConfirm(record)}
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center"
+          >
             <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
         </div>
@@ -222,6 +227,63 @@ const Assistants = () => {
   const handleClickAssignCourse = (id) => {
     setShowModalAssignCourse(true);
     setAssistant_id(id);
+  };
+
+  // ------------------------ Edit ---------------------------
+  const [showModalEditAssistant, setShowModalEditAssistant] = useState(false);
+  const [editDataAssistant, setEditDataAssistant] = useState(null);
+
+  const [formEditAssistant] = Form.useForm();
+
+  const handleClickEditAssistant = (record) => {
+    formEditAssistant.setFieldsValue(record);
+    setShowModalEditAssistant(true);
+    setEditDataAssistant(record);
+  };
+
+  // ---------------- Modal delete Assistant -----------------
+  const { confirm } = Modal;
+
+  const showDeleteConfirm = (record) => {
+    confirm({
+      title: <p>Are you sure delete this assistant ({record.name})?</p>,
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      width: 550,
+      onOk() {
+        api
+          .delete(`assistants/${record.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const updatedDataSource = tableData.filter(
+              (assistant) => assistant.id !== record.id
+            );
+            setTableData(updatedDataSource);
+
+            toast.success(res.data.message, {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
@@ -271,6 +333,16 @@ const Assistants = () => {
           showModalAssignCourse={showModalAssignCourse}
           setShowModalAssignCourse={setShowModalAssignCourse}
           assistant_id={assistant_id}
+        />
+
+        {/* ------------Edit ------------ */}
+        <EditAssistant
+          editDataAssistant={editDataAssistant}
+          formEditAssistant={formEditAssistant}
+          setEditDataAssistant={setEditDataAssistant}
+          setShowModalEditAssistant={setShowModalEditAssistant}
+          showModalEditAssistant={showModalEditAssistant}
+          setTableData={setTableData}
         />
       </div>
     </div>

@@ -6,44 +6,15 @@ import {
   EyeFilled,
   EditFilled,
   DeleteFilled,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import api from "../api";
 import AddSection from "./AddSection";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import EditSection from "./EditSection";
 
-const data = [
-  {
-    id: "1",
-    section: "101",
-    course: "DB",
-    total_student: "20",
-  },
-  {
-    id: "2",
-    section: "102",
-    course: "DB",
-    total_student: "30",
-  },
-  {
-    id: "3",
-    section: "103",
-    course: "DB",
-    total_student: "25",
-  },
-  {
-    id: "4",
-    section: "101",
-    course: "Java 1",
-    total_student: "40",
-  },
-  {
-    id: "5",
-    section: "102",
-    course: "Java 1",
-    total_student: "40",
-  },
-];
 const Sections = () => {
   const route = useNavigate();
   const token = sessionStorage.getItem("token");
@@ -175,10 +146,9 @@ const Sections = () => {
     },
     {
       title: "Course",
-      dataIndex: "course_id",
-      key: "course_id",
-      sorter: (a, b) => a.course_id - b.course_id,
-      // sorter: (a, b) => a.course_id.localeCompare(b.course_id),
+      dataIndex: "course_title",
+      key: "course_title",
+      sorter: (a, b) => a.course_title.localeCompare(b.course_title),
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -200,8 +170,8 @@ const Sections = () => {
     },
     {
       title: "Total Student",
-      dataIndex: "total_student",
-      key: "total_student",
+      dataIndex: "students_count",
+      key: "students_count",
     },
 
     {
@@ -209,15 +179,18 @@ const Sections = () => {
       key: "operation",
       // fixed: "right",
       // width: '10%',
-      render: () => (
+      render: (record) => (
         <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => handleClickEditSection(record)}
+            className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center"
+          >
             <EditFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => showDeleteConfirm(record)}
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center"
+          >
             <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
         </div>
@@ -257,6 +230,63 @@ const Sections = () => {
         .catch((err) => console.log(err));
     }
   }, [token]);
+
+  // ------------------------ Edit ---------------------------
+  const [showModalEditSection, setShowModalEditSection] = useState(false);
+  const [editDataSection, setEditDataSection] = useState(null);
+
+  const [formEditSection] = Form.useForm();
+
+  const handleClickEditSection = (record) => {
+    formEditSection.setFieldsValue(record);
+    setShowModalEditSection(true);
+    setEditDataSection(record);
+  };
+
+  // ---------------- Modal delete section -----------------
+  const { confirm } = Modal;
+
+  const showDeleteConfirm = (record) => {
+    confirm({
+      title: <p>Are you sure delete this section ({record.number})?</p>,
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      width: 550,
+      onOk() {
+        api
+          .delete(`sections/${record.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const updatedDataSource = tableData.filter(
+              (section) => section.id !== record.id
+            );
+            setTableData(updatedDataSource);
+
+            toast.success(res.data.message, {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
@@ -296,6 +326,15 @@ const Sections = () => {
         <AddSection
           showModal={showModal}
           setShowModal={setShowModal}
+          setTableData={setTableData}
+        />
+        {/* ------------Edit ------------ */}
+        <EditSection
+          editDataSection={editDataSection}
+          formEditSection={formEditSection}
+          setEditDataSection={setEditDataSection}
+          setShowModalEditSection={setShowModalEditSection}
+          showModalEditSection={showModalEditSection}
           setTableData={setTableData}
         />
       </div>

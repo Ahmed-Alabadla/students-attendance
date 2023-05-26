@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import React from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -6,7 +6,6 @@ import api from "../api";
 
 const AddCourse = ({ showModal, setShowModal, setTableData }) => {
   // ----------------------------
-  const { Option } = Select;
 
   const formItemLayout = {
     labelCol: {
@@ -14,7 +13,7 @@ const AddCourse = ({ showModal, setShowModal, setTableData }) => {
         span: 24,
       },
       sm: {
-        span: 7,
+        span: 4,
       },
     },
     wrapperCol: {
@@ -22,7 +21,7 @@ const AddCourse = ({ showModal, setShowModal, setTableData }) => {
         span: 24,
       },
       sm: {
-        span: 16,
+        span: 19,
       },
     },
   };
@@ -113,25 +112,17 @@ const AddCourse = ({ showModal, setShowModal, setTableData }) => {
         >
           <Input size="large" placeholder="Enter a title" />
         </Form.Item>
-
         <Form.Item
-          name="dept_name"
-          label="Department"
-          rules={
-            [
-              // {
-              //   required: true,
-              //   message: "Please select Department!",
-              // },
-            ]
-          }
+          name="book"
+          label="Book"
+          rules={[
+            {
+              required: true,
+              message: "Please input your  book!",
+            },
+          ]}
         >
-          <Select placeholder="select Department" size="large">
-            <Option value="dept_1">Department 1</Option>
-            <Option value="dept_2">Department 2</Option>
-            <Option value="dept_3">Department 3</Option>
-            <Option value="dept_4">Department 4</Option>
-          </Select>
+          <Input size="large" placeholder="Enter a book" />
         </Form.Item>
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>

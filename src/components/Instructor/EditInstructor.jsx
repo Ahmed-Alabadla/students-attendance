@@ -1,27 +1,23 @@
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import React from "react";
 import api from "../api";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const EditStudent = ({
-  showModalEditStudent,
-  setShowModalEditStudent,
-  editDataStudent,
-  setEditDataStudent,
-  formEditStudent,
+const EditInstructor = ({
+  showModalEditInstructor,
+  setShowModalEditInstructor,
+  editDataInstructor,
+  setEditDataInstructor,
+  formEditInstructor,
   setTableData,
 }) => {
   const token = sessionStorage.getItem("token");
 
-  const onFinishEditStudent = (values) => {
-    const data = {
-      name: values.name,
-      phone: values.phone,
-      address: values.address.city + " - " + values.address.street,
-    };
+  const onFinishEditInstructor = (values) => {
+    // console.log("Received values of form: ", values);
     api
-      .post(`students/${editDataStudent.id}`, data, {
+      .post(`instructors/${editDataInstructor.id}`, values, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -46,10 +42,10 @@ const EditStudent = ({
           );
           return [...updatedDataSource, res.data.data];
         });
-        formEditStudent.resetFields();
+        formEditInstructor.resetFields();
 
-        setShowModalEditStudent(false);
-        setEditDataStudent(null);
+        setShowModalEditInstructor(false);
+        setEditDataInstructor(null);
       })
       .catch((err) => {
         console.log(err);
@@ -67,13 +63,11 @@ const EditStudent = ({
       });
   };
 
-  const handleCancelEditStudent = () => {
-    setShowModalEditStudent(false);
-    setEditDataStudent(null);
-    formEditStudent.resetFields();
+  const handleCancelEditInstructor = () => {
+    setShowModalEditInstructor(false);
+    setEditDataInstructor(null);
+    formEditInstructor.resetFields();
   };
-
-  const { Option } = Select;
 
   const formItemLayout = {
     labelCol: {
@@ -95,37 +89,38 @@ const EditStudent = ({
   };
   return (
     <Modal
-      open={showModalEditStudent}
-      onCancel={handleCancelEditStudent}
+      open={showModalEditInstructor}
+      onCancel={handleCancelEditInstructor}
       footer={[]}
       centered
     >
       <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-        Edit Student
+        Edit Instructor
       </p>
-      {editDataStudent && (
+      {editDataInstructor && (
         <Form
           {...formItemLayout}
-          form={formEditStudent}
-          onFinish={onFinishEditStudent}
+          form={formEditInstructor}
+          onFinish={onFinishEditInstructor}
           className="mx-auto mt-8"
           style={{
             width: "100%",
             maxWidth: 700,
           }}
+          initialValues={editDataInstructor}
           scrollToFirstError
         >
           <Form.Item
             name="name"
-            label="Student Name"
+            label="Name"
             rules={[
               {
                 required: true,
-                message: "Please input your student name!",
+                message: "Please input your  name!",
               },
             ]}
           >
-            <Input size="large" placeholder="Enter a student name" />
+            <Input size="large" placeholder="Enter a  name" />
           </Form.Item>
           <Form.Item
             name="phone"
@@ -148,41 +143,6 @@ const EditStudent = ({
             <Input size="large" placeholder="Enter a Phone number" />
           </Form.Item>
 
-          <Form.Item label="Address">
-            <Input.Group compact className="!flex">
-              <Form.Item
-                name={["address", "city"]}
-                noStyle
-                rules={[
-                  {
-                    required: true,
-                    message: "City is required",
-                  },
-                ]}
-              >
-                <Select placeholder="Select City" size="large">
-                  <Option value="Northern Gaza">Northern Gaza</Option>
-                  <Option value="Gaza">Gaza</Option>
-                  <Option value="Alwustaa">Alwustaa</Option>
-                  <Option value="Khan Yunis">Khan Yunis</Option>
-                  <Option value="Rafah">Rafah</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name={["address", "street"]}
-                noStyle
-                rules={[
-                  {
-                    required: true,
-                    message: "Street is required",
-                  },
-                ]}
-              >
-                <Input size="large" placeholder="Input street" />
-              </Form.Item>
-            </Input.Group>
-          </Form.Item>
-
           <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
             <Button
               type="primary"
@@ -190,7 +150,7 @@ const EditStudent = ({
               size="large"
               className="w-full "
             >
-              Edit student
+              Edit
             </Button>
           </Form.Item>
         </Form>
@@ -199,4 +159,4 @@ const EditStudent = ({
   );
 };
 
-export default EditStudent;
+export default EditInstructor;

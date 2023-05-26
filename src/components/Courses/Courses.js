@@ -1,16 +1,18 @@
-import { Button, Input, Pagination, Space, Table } from "antd";
+import { Button, Form, Input, Modal, Pagination, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SearchOutlined,
-  EyeFilled,
   EditFilled,
   DeleteFilled,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import api from "../api";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AddCourse from "./AddCourse";
+import EditCourse from "./EditCourse";
 
 const Courses = () => {
   const route = useNavigate();
@@ -138,15 +140,14 @@ const Courses = () => {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      width: "25%",
+      // width: "25%",
       ...getColumnSearchProps("title"),
     },
-
     {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      width: "20%",
+      title: "Book name",
+      dataIndex: "book",
+      key: "book",
+      // width: "25%",
     },
 
     {
@@ -154,15 +155,18 @@ const Courses = () => {
       key: "operation",
       // fixed: "right",
       // width: '10%',
-      render: () => (
+      render: (record) => (
         <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => handleClickEditCourse(record)}
+            className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center"
+          >
             <EditFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => showDeleteConfirm(record)}
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center"
+          >
             <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
         </div>
@@ -201,6 +205,62 @@ const Courses = () => {
     }
   }, [token]);
 
+  // ------------------------ Edit ---------------------------
+  const [showModalEditCourse, setShowModalEditCourse] = useState(false);
+  const [editDataCourse, setEditDataCourse] = useState(null);
+
+  const [formEditCourse] = Form.useForm();
+
+  const handleClickEditCourse = (record) => {
+    formEditCourse.setFieldsValue(record);
+    setShowModalEditCourse(true);
+    setEditDataCourse(record);
+  };
+
+  // ---------------- Modal delete Course -----------------
+  const { confirm } = Modal;
+
+  const showDeleteConfirm = (record) => {
+    confirm({
+      title: <p>Are you sure delete this course ({record.title})?</p>,
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      width: 550,
+      onOk() {
+        api
+          .delete(`courses/${record.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const updatedDataSource = tableData.filter(
+              (course) => course.id !== record.id
+            );
+            setTableData(updatedDataSource);
+
+            toast.success(res.data.message, {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
       <p className="text-2xl font-semibold text-center mt-3 text-[#008ECC]">
@@ -241,6 +301,15 @@ const Courses = () => {
         <AddCourse
           showModal={showModal}
           setShowModal={setShowModal}
+          setTableData={setTableData}
+        />
+        {/*  ------------Edit course------------ */}
+        <EditCourse
+          editDataCourse={editDataCourse}
+          formEditCourse={formEditCourse}
+          setEditDataCourse={setEditDataCourse}
+          setShowModalEditCourse={setShowModalEditCourse}
+          showModalEditCourse={showModalEditCourse}
           setTableData={setTableData}
         />
       </div>

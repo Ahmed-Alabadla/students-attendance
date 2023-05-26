@@ -169,6 +169,8 @@ const Lectures = () => {
       title: "Course",
       dataIndex: "course",
       key: "course",
+      sorter: (a, b) => a.course.localeCompare(b.course),
+      sortDirections: ["descend", "ascend"],
     },
     {
       title: "Year",

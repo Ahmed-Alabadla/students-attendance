@@ -30,8 +30,17 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
+    const data = {
+      name: values.name,
+      number: values.number,
+      email: values.email,
+      phone: values.phone_number.prefix + values.phone_number.phone,
+      address: values.address.city + " - " + values.address.street,
+    };
+
+    console.log(data);
     api
-      .post("students", values, {
+      .post("students", data, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -148,24 +157,6 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
         >
           <Input placeholder="Enter an email" size="large" />
         </Form.Item>
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-            {
-              pattern: "^.{8,20}$",
-              message:
-                "Please enter a password between 8 and 20 characters long.",
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password size="large" placeholder="Enter a password" />
-        </Form.Item>
 
         <Form.Item label="Phone number">
           <Input.Group compact className="!flex">
@@ -183,10 +174,10 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
               name={["phone_number", "phone"]}
               noStyle
               rules={[
-                // {
-                //   required: true,
-                //   message: "Please input your phone number!",
-                // },
+                {
+                  required: true,
+                  message: "Please input your phone number!",
+                },
                 {
                   pattern: "^[0-9]{7}$",
                   message: "Please enter a valid 7-digit phone number.",
@@ -203,34 +194,30 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
             <Form.Item
               name={["address", "city"]}
               noStyle
-              rules={
-                [
-                  // {
-                  //   required: true,
-                  //   message: "City is required",
-                  // },
-                ]
-              }
+              rules={[
+                {
+                  required: true,
+                  message: "City is required",
+                },
+              ]}
             >
               <Select placeholder="Select City" size="large">
-                <Option value="northern_gaza">Northern Gaza</Option>
-                <Option value="gaza">Gaza</Option>
-                <Option value="alwustaa">Alwustaa</Option>
-                <Option value="khan_yunis">Khan Yunis</Option>
-                <Option value="rafah">Rafah</Option>
+                <Option value="Northern Gaza">Northern Gaza</Option>
+                <Option value="Gaza">Gaza</Option>
+                <Option value="Alwustaa">Alwustaa</Option>
+                <Option value="Khan Yunis">Khan Yunis</Option>
+                <Option value="Rafah">Rafah</Option>
               </Select>
             </Form.Item>
             <Form.Item
               name={["address", "street"]}
               noStyle
-              rules={
-                [
-                  // {
-                  //   required: true,
-                  //   message: "Street is required",
-                  // },
-                ]
-              }
+              rules={[
+                {
+                  required: true,
+                  message: "Street is required",
+                },
+              ]}
             >
               <Input size="large" placeholder="Input street" />
             </Form.Item>

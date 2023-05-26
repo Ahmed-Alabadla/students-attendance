@@ -31,8 +31,14 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
+    const data = {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      phone: values.phone_number.prefix + values.phone_number.phone,
+    };
     api
-      .post("assistants", values, {
+      .post("assistants", data, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -194,10 +200,10 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
               name={["phone_number", "phone"]}
               noStyle
               rules={[
-                // {
-                //   required: true,
-                //   message: "Please input your phone number!",
-                // },
+                {
+                  required: true,
+                  message: "Please input your phone number!",
+                },
                 {
                   pattern: "^[0-9]{7}$",
                   message: "Please enter a valid 7-digit phone number.",

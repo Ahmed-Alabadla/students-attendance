@@ -88,7 +88,7 @@ const AddRoom = ({ showModal, setShowModal, setTableData }) => {
       }}
     >
       <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-        Add Section
+        Add Room
       </p>
       <Form
         {...formItemLayout}
@@ -126,40 +126,6 @@ const AddRoom = ({ showModal, setShowModal, setTableData }) => {
         >
           <Input size="large" placeholder="Enter a room number" />
         </Form.Item>
-
-        {/* <Form.Item
-              name="courseID"
-              label="Course ID"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select course!",
-                },
-              ]}
-            >
-              <Select placeholder="select Course" size="large">
-                <Option value="ECOM3401">DB</Option>
-                <Option value="ECOM3302">Java 2</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="dept_name"
-              label="Department"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select Department!",
-                },
-              ]}
-            >
-              <Select placeholder="select Department" size="large">
-                <Option value="dept_1">Department 1</Option>
-                <Option value="dept_2">Department 2</Option>
-                <Option value="dept_3">Department 3</Option>
-                <Option value="dept_4">Department 4</Option>
-              </Select>
-            </Form.Item> */}
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
           <Button

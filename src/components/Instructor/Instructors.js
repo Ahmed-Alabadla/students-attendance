@@ -6,6 +6,7 @@ import {
   DeleteFilled,
   EditFilled,
   EyeFilled,
+  ExclamationCircleFilled,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import api from "../api";
@@ -13,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddInstructor from "./AddInstructor";
 import AssignCourseToInstructor from "./AssignCourseToInstructor";
+import EditInstructor from "./EditInstructor";
 
 const Instructors = () => {
   const token = sessionStorage.getItem("token");
@@ -185,12 +187,7 @@ const Instructors = () => {
       key: "phone",
       // width: "20%",
     },
-    {
-      title: "Department",
-      dataIndex: "dept_name",
-      key: "dept_name",
-      // width: "20%",
-    },
+
     {
       title: "Course",
       key: "course",
@@ -206,23 +203,27 @@ const Instructors = () => {
       key: "operation",
       // fixed: "right",
       // width: '10%',
-      render: () => (
+      render: (record) => (
         <div className="flex gap-2">
-          <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
+          {/* <button className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center">
             <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
-          <button className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center">
+          </button> */}
+          <button
+            onClick={() => handleClickEditInstructor(record)}
+            className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center"
+          >
             <EditFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
-          <button className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center">
+          <button
+            onClick={() => showDeleteConfirm(record)}
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-lg flex items-center justify-center"
+          >
             <DeleteFilled style={{ color: "white", fontSize: "18px" }} />
           </button>
         </div>
       ),
     },
   ];
-
-  // ----------------------------
 
   // --------------- Add Instructors -----------------
   const [showModalAdd, setShowModalAdd] = useState(false);
@@ -235,6 +236,63 @@ const Instructors = () => {
   const handleClickAssignCourse = (id) => {
     setShowModalAssignCourse(true);
     setInstructor_id(id);
+  };
+
+  // ------------------------ Edit ---------------------------
+  const [showModalEditInstructor, setShowModalEditInstructor] = useState(false);
+  const [editDataInstructor, setEditDataInstructor] = useState(null);
+
+  const [formEditInstructor] = Form.useForm();
+
+  const handleClickEditInstructor = (record) => {
+    formEditInstructor.setFieldsValue(record);
+    setShowModalEditInstructor(true);
+    setEditDataInstructor(record);
+  };
+
+  // ---------------- Modal delete instructor -----------------
+  const { confirm } = Modal;
+
+  const showDeleteConfirm = (record) => {
+    confirm({
+      title: <p>Are you sure delete this instructor ({record.name})?</p>,
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      width: 550,
+      onOk() {
+        api
+          .delete(`instructors/${record.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            const updatedDataSource = tableData.filter(
+              (instructor) => instructor.id !== record.id
+            );
+            setTableData(updatedDataSource);
+
+            toast.success(res.data.message, {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
 
   return (
@@ -284,6 +342,16 @@ const Instructors = () => {
           showModalAssignCourse={showModalAssignCourse}
           setShowModalAssignCourse={setShowModalAssignCourse}
           instructor_id={instructor_id}
+        />
+
+        {/* ------------Edit ------------ */}
+        <EditInstructor
+          editDataInstructor={editDataInstructor}
+          formEditInstructor={formEditInstructor}
+          setEditDataInstructor={setEditDataInstructor}
+          setShowModalEditInstructor={setShowModalEditInstructor}
+          showModalEditInstructor={showModalEditInstructor}
+          setTableData={setTableData}
         />
       </div>
     </div>

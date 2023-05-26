@@ -150,11 +150,22 @@ const Students = () => {
       title: "Student number",
       dataIndex: "number",
       key: "number",
+      ...getColumnSearchProps("number"),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
+    },
+    {
+      title: "Phone number",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
 
     {
@@ -175,12 +186,6 @@ const Students = () => {
       // width: '10%',
       render: (_, record) => (
         <div className="flex gap-2">
-          <button
-            onClick={() => handleClickShowStudent(record)}
-            className="p-2 bg-blue-500 hover:bg-blue-600 rounded-lg flex items-center justify-center"
-          >
-            <EyeFilled style={{ color: "white", fontSize: "18px" }} />
-          </button>
           <button
             onClick={() => handleClickEditStudent(record)}
             className="p-2 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center"
@@ -248,40 +253,45 @@ const Students = () => {
 
   const showDeleteConfirm = (record) => {
     confirm({
-      title: <p>Are you sure delete this student ({record.student_name})?</p>,
+      title: <p>Are you sure delete this student ({record.name})?</p>,
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      width: 500,
+      width: 550,
       onOk() {
-        console.log("OK");
+        api
+          .delete(`students/${record.id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            const updatedDataSource = tableData.filter(
+              (instructor) => instructor.id !== record.id
+            );
+            setTableData(updatedDataSource);
 
-        toast.success("delete successfully", {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
+            toast.success(res.data.message, {
+              position: "bottom-left",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
       },
       onCancel() {
         console.log("Cancel");
       },
     });
-  };
-
-  // ---------------- Modal show student -----------------
-  const [showModalShowStudent, setShowModalShowStudent] = useState(false);
-  const [studentData, setStudentData] = useState(null);
-
-  const handleClickShowStudent = (record) => {
-    setShowModalShowStudent(true);
-    setStudentData(record);
   };
 
   // ---------------- Modal edit student -----------------
@@ -291,7 +301,17 @@ const Students = () => {
   const [formEditStudent] = Form.useForm();
 
   const handleClickEditStudent = (record) => {
-    formEditStudent.setFieldsValue(record);
+    const address = record.address.split("-");
+    const initialValues = {
+      name: record.name,
+      phone: record.phone,
+
+      address: {
+        city: address[0],
+        street: address[1],
+      },
+    };
+    formEditStudent.setFieldsValue(initialValues);
     setShowModalEditStudent(true);
     setEditDataStudent(record);
   };
@@ -354,65 +374,8 @@ const Students = () => {
           editDataStudent={editDataStudent}
           setEditDataStudent={setEditDataStudent}
           formEditStudent={formEditStudent}
+          setTableData={setTableData}
         />
-        {/* -------Modal show student------- */}
-        <Modal
-          open={showModalShowStudent}
-          onCancel={() => {
-            setShowModalShowStudent(false);
-            setStudentData(null);
-          }}
-          footer={[]}
-          centered
-        >
-          <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
-            Details student
-          </p>
-
-          <div className="flex flex-col gap-5">
-            <div className="bg-[#F4F6F9] p-2.5 shadow rounded-lg">
-              <p className="text-base font-medium">Student name :</p>
-              <p className="mt-1.5 text-gray-500">{studentData?.name}</p>
-            </div>
-            <div className="bg-[#F4F6F9] p-2.5 shadow rounded-lg">
-              <p className="text-base font-medium">Student number :</p>
-              <p className="mt-1.5 text-gray-500">{studentData?.number}</p>
-            </div>
-            <div className="bg-[#F4F6F9] p-2.5 shadow rounded-lg">
-              <p className="text-base font-medium">Phone number :</p>
-              <p className="mt-1.5 text-gray-500">
-                {studentData?.phone_number}
-              </p>
-            </div>
-            <div className="bg-[#F4F6F9] p-2.5 shadow rounded-lg">
-              <p className="text-base font-medium">Address :</p>
-
-              {/* <div className="flex gap-5 mt-3 items-center justify-center">
-                <div className="flex items-center gap-2 px-3 py-1.5 border rounded-xl">
-                  <p className=""> City :</p>
-                  <p className="">{studentData?.address.city}</p>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 border rounded-xl">
-                  <p className="">Street :</p>
-                  <p className="">{studentData?.address.street}</p>
-                </div>
-              </div> */}
-            </div>
-            <div className="bg-[#F4F6F9] p-2.5 shadow rounded-lg">
-              <p className="text-base font-medium">Courses :</p>
-
-              <div className="flex gap-5 mt-3 items-center flex-wrap justify-center">
-                <p className="px-3 py-1.5 border rounded-xl"> Database</p>
-                <p className="px-3 py-1.5 border rounded-xl">Control</p>
-                <p className="px-3 py-1.5 border rounded-xl">Java 2</p>
-                <p className="px-3 py-1.5 border rounded-xl">Logic design</p>
-                <p className="px-3 py-1.5 border rounded-xl">
-                  Digital Electronic
-                </p>
-              </div>
-            </div>
-          </div>
-        </Modal>
       </div>
     </div>
   );
