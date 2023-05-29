@@ -1,7 +1,8 @@
-# Students attendance app
+# <p align="center">Students Attendance App</p>
 
 > **Warning**
 > Make sure to follow the requirements first.
+
 
 ## Prerequisites
 
@@ -12,10 +13,9 @@ Before cloning and running this React project, make sure you have the following 
 ## Clone the Repository
 
 To clone this repository, open your terminal and navigate to the directory where you want to clone the project. Then, run the following command:
-
-    ```sh
-    git clone https://github.com/Ahmed-Alabadla/students-attendance.git
-    ```
+```sh
+https://github.com/Ahmed-Alabadla/students-attendance.git
+```
 
 ## Project Setup
 
