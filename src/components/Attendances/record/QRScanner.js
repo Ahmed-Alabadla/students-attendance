@@ -20,7 +20,7 @@ const QRScanner = () => {
         await api
           .post(
             "attendances",
-            { student_number: id, lecture_id: lecture_id },
+            { student_number: id, lecture_id: lecture_id.id },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ const QRScanner = () => {
 
   return (
     <div className="flex justify-center  h-full">
-      <div className=" w-[450px]">
+      <div className=" w-[400px]">
         <QrScanner
           onDecode={(result) => setId(result)}
           onError={(error) => console.log(error?.message)}

@@ -1,11 +1,8 @@
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat);
 
 const AddSection = ({ showModal, setShowModal, setTableData }) => {
   // ----------------------------
@@ -34,16 +31,9 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    const data = {
-      number: values.number,
-      course_id: values.course_id,
-      semester: values.semester,
-      year: `${values.year.$y}-${values.year.$y + 1}`,
-    };
-    console.log(data);
     console.log(values);
     api
-      .post("sections", data, {
+      .post("sections", values, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -105,11 +95,6 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
     }
   }, [token]);
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
   return (
     <Modal
       open={showModal}
@@ -193,34 +178,19 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
             },
           ]}
         >
-          <DatePicker
-            // onChange={(ev) => console.log(ev.$y)}
-            picker="year"
-            disabledDate={disabledDate}
-            size="large"
-            className="w-full"
-          />
-        </Form.Item>
-
-        {/* <Form.Item
-          name="room_number"
-          label="Room Number"
-          rules={
-            [
-              // {
-              //   required: true,
-              //   message: "Please select room_number!",
-              // },
-            ]
-          }
-        >
-          <Select placeholder="select Room Number" size="large">
-            <Option value="room1">Room 1</Option>
-            <Option value="room2">Room 2</Option>
-            <Option value="room3">Room 3</Option>
-            <Option value="room4">Room 4</Option>
+          <Select placeholder="select year" size="large">
+            <Option value="2020-2021">2020-2021</Option>
+            <Option value="2021-2022">2021-2022</Option>
+            <Option value="2022-2023">2022-2023</Option>
+            <Option value="2023-2024">2023-2024</Option>
+            <Option value="2024-2025">2024-2025</Option>
+            <Option value="2025-2026">2025-2026</Option>
+            <Option value="2026-2027">2026-2027</Option>
+            <Option value="2027-2028">2027-2028</Option>
+            <Option value="2028-2029">2028-2029</Option>
+            <Option value="2029-2030">2029-2030</Option>
           </Select>
-        </Form.Item> */}
+        </Form.Item>
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
           <Button

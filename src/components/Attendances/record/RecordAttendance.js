@@ -1,6 +1,6 @@
-import { Button, Form, Input, Tabs } from "antd";
+import { AutoComplete, Button, Form, Input, Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import QRScanner from "./QRScanner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,7 +31,6 @@ const RecordAttendance = () => {
   };
 
   const { lecture_id } = useSelector((state) => state.lecture);
-  console.log(lecture_id);
 
   const [form] = Form.useForm();
   const onFinish = async (values) => {
@@ -40,7 +39,7 @@ const RecordAttendance = () => {
     await api
       .post(
         "attendances",
-        { student_number: values.student_number, lecture_id: lecture_id },
+        { student_number: values.student_number, lecture_id: lecture_id.id },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,59 +76,104 @@ const RecordAttendance = () => {
       });
   };
 
-  return (
-    <Tabs defaultActiveKey="1" centered tabStyle={{ fontWeight: "bold" }}>
-      <TabPane tab="QR Scanner" key="1">
-        <QRScanner />
-      </TabPane>
-      <TabPane tab="Form" key="2">
-        <Form
-          {...formItemLayout}
-          form={form}
-          name="register"
-          onFinish={onFinish}
-          className="mx-auto"
-          style={{
-            width: "100%",
-            maxWidth: 700,
-          }}
-          scrollToFirstError
-        >
-          <Form.Item
-            fieldProps={{ pattern: "^[0-9]{9}$" }}
-            name="student_number"
-            label="Student Number"
-            rules={[
-              {
-                required: true,
-                message: "Please input student number!",
-              },
-              {
-                pattern: "^[0-9]{9}$",
-                message: "Please enter a valid 9-digit student number!",
-              },
-            ]}
-          >
-            <Input size="large" placeholder="ex: 12020xxxx" />
-          </Form.Item>
+  // -----------------list of student----------------
+  const [studentData, setStudentData] = useState();
 
-          <Form.Item cclassName="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              className="w-full "
+  useEffect(() => {
+    api
+      .get("students", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setStudentData(res.data.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const [dataSource, setDataSource] = useState([]);
+
+  const handleSearch = (value) => {
+    const filteredStudents = studentData.filter((student) => {
+      const { name, number } = student;
+      return (
+        name.toLowerCase().includes(value.toLowerCase()) ||
+        number.toString().includes(value)
+      );
+    });
+    setDataSource(filteredStudents);
+  };
+
+  return (
+    <>
+      <p className="text-lg">
+        lecture name : <span className="text-[#008ECC]">{lecture_id.name}</span>
+      </p>
+      <Tabs defaultActiveKey="1" centered tabStyle={{ fontWeight: "bold" }}>
+        <TabPane tab="QR Scanner" key="1">
+          <QRScanner />
+        </TabPane>
+        <TabPane tab="Form" key="2">
+          <Form
+            {...formItemLayout}
+            form={form}
+            name="register"
+            onFinish={onFinish}
+            className="mx-auto"
+            style={{
+              width: "100%",
+              maxWidth: 700,
+            }}
+            scrollToFirstError
+          >
+            <Form.Item
+              // fieldProps={{ pattern: "^[0-9]{9}$" }}
+              name="student_number"
+              label="Student"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input student number or name!",
+                },
+                // {
+                //   pattern: "^[0-9]{9}$",
+                //   message: "Please enter a valid 9-digit student number!",
+                // },
+              ]}
             >
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-        <ToastContainer />
-      </TabPane>
-      <TabPane tab="Import Data" key="3">
-        <ImportAttendance />
-      </TabPane>
-    </Tabs>
+              <AutoComplete
+                size="large"
+                dataSource={dataSource.map((student) => ({
+                  value: student.number.toString(),
+                  text: `${student.number} - ${student.name}`,
+                }))}
+                onSearch={handleSearch}
+                placeholder="Type a student name or number"
+              />
+              {/* <Input size="large" placeholder="ex: 12020xxxx" /> */}
+            </Form.Item>
+
+            <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                className="w-full "
+              >
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+          <ToastContainer />
+        </TabPane>
+        <TabPane tab="Import Data" key="3">
+          <ImportAttendance />
+        </TabPane>
+      </Tabs>
+    </>
   );
 };
 

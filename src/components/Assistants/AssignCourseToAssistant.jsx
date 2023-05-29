@@ -1,11 +1,8 @@
-import { Button, DatePicker, Form, Modal, Select } from "antd";
+import { Button, Form, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat);
 
 const AssignCourseToAssistant = ({
   showModalAssignCourse,
@@ -42,7 +39,7 @@ const AssignCourseToAssistant = ({
       assistant_id: assistant_id,
       course_id: values.course_id,
       semester: values.semester,
-      year: `${values.year.$y}-${values.year.$y + 1}`,
+      year: values.year,
     };
     api
       .post("assists", data, {
@@ -81,7 +78,6 @@ const AssignCourseToAssistant = ({
           theme: "colored",
         });
       });
-    // console.log("Received values of form: ", values);
   };
 
   // ----------courses------------------
@@ -104,11 +100,6 @@ const AssignCourseToAssistant = ({
     }
   }, [token]);
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
   return (
     <Modal
       open={showModalAssignCourse}
@@ -179,13 +170,18 @@ const AssignCourseToAssistant = ({
             },
           ]}
         >
-          <DatePicker
-            // onChange={(ev) => console.log(ev.$y)}
-            picker="year"
-            disabledDate={disabledDate}
-            size="large"
-            className="w-full"
-          />
+          <Select placeholder="select year" size="large">
+            <Option value="2020-2021">2020-2021</Option>
+            <Option value="2021-2022">2021-2022</Option>
+            <Option value="2022-2023">2022-2023</Option>
+            <Option value="2023-2024">2023-2024</Option>
+            <Option value="2024-2025">2024-2025</Option>
+            <Option value="2025-2026">2025-2026</Option>
+            <Option value="2026-2027">2026-2027</Option>
+            <Option value="2027-2028">2027-2028</Option>
+            <Option value="2028-2029">2028-2029</Option>
+            <Option value="2029-2030">2029-2030</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>

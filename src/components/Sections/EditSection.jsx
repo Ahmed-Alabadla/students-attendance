@@ -1,10 +1,9 @@
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Option } from "antd/es/mentions";
-import dayjs from "dayjs";
 
 const EditSection = ({
   showModalEditSection,
@@ -109,11 +108,6 @@ const EditSection = ({
     }
   }, [token]);
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
   return (
     <Modal
       open={showModalEditSection}
@@ -184,7 +178,7 @@ const EditSection = ({
             </Select>
           </Form.Item>
 
-          {/* <Form.Item
+          <Form.Item
             name="year"
             label="Year"
             rules={[
@@ -194,14 +188,19 @@ const EditSection = ({
               },
             ]}
           >
-            <DatePicker
-              // onChange={(ev) => console.log(ev.$y)}
-              picker="year"
-              disabledDate={disabledDate}
-              size="large"
-              className="w-full"
-            />
-          </Form.Item> */}
+            <Select placeholder="select year" size="large">
+              <Option value="2020-2021">2020-2021</Option>
+              <Option value="2021-2022">2021-2022</Option>
+              <Option value="2022-2023">2022-2023</Option>
+              <Option value="2023-2024">2023-2024</Option>
+              <Option value="2024-2025">2024-2025</Option>
+              <Option value="2025-2026">2025-2026</Option>
+              <Option value="2026-2027">2026-2027</Option>
+              <Option value="2027-2028">2027-2028</Option>
+              <Option value="2028-2029">2028-2029</Option>
+              <Option value="2029-2030">2029-2030</Option>
+            </Select>
+          </Form.Item>
           <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>
             <Button
               type="primary"

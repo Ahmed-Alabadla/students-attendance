@@ -90,6 +90,17 @@ const Sidebar = () => {
         onClick={() => route("attendances")}
       />
     ),
+
+    getItem(
+      <button onClick={() => route("export-report-of-student")}>
+        ExportReportOfStudent
+      </button>,
+      "export-report-of-student",
+      <EyeOutlined
+        style={{ fontSize: "22px" }}
+        onClick={() => route("export-report-of-student")}
+      />
+    ),
   ];
 
   const items_admin = [
@@ -178,8 +189,8 @@ const Sidebar = () => {
     "/students": "Students",
     "/rooms": "Rooms",
     "/attendances": "Attendances",
-    "/show-attendances": "Show Attendances",
     "/record-attendance": "Record Attendance",
+    "/export-report-of-student": "Export report of student",
   };
 
   const pathSnippets = window.location.pathname.split("/").filter((i) => i);

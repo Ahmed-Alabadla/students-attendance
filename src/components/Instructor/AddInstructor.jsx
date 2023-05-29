@@ -13,7 +13,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
         span: 24,
       },
       sm: {
-        span: 7,
+        span: 6,
       },
     },
     wrapperCol: {
@@ -30,7 +30,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
   const [formAdd] = Form.useForm();
   const onFinish = (values) => {
     const data = {
-      name: values.name,
+      name: values.firstName + " " + values.lastName,
       email: values.email,
       phone: values.phone_number.prefix + values.phone_number.phone,
     };
@@ -88,6 +88,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
       style={{
         top: 35,
       }}
+      width={550}
     >
       <p className="text-2xl font-semibold text-center mt-7 mb-5 text-[#008ECC]">
         Add Instructor
@@ -107,16 +108,42 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
         scrollToFirstError
       >
         <Form.Item
-          name="name"
-          label="Full Name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your fullname!",
-            },
-          ]}
+          label="Name"
+          style={{
+            marginBottom: 0,
+          }}
         >
-          <Input size="large" placeholder="Enter a Full Name" />
+          <Form.Item
+            name="firstName"
+            rules={[
+              {
+                required: true,
+                message: "Please input your first name!",
+              },
+            ]}
+            style={{
+              display: "inline-block",
+              width: "calc(50% - 8px)",
+            }}
+          >
+            <Input size="large" placeholder="Enter a first name" />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            rules={[
+              {
+                required: true,
+                message: "Please input your last name!",
+              },
+            ]}
+            style={{
+              display: "inline-block",
+              width: "calc(50% - 8px)",
+              margin: "0 8px",
+            }}
+          >
+            <Input size="large" placeholder="Enter a last name" />
+          </Form.Item>
         </Form.Item>
 
         <Form.Item

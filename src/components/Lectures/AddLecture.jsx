@@ -1,18 +1,13 @@
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api";
-import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { setLectureId } from "../../redux/lectureSlice";
 import { useNavigate } from "react-router-dom";
 
-const AddLecture = ({
-  showModal,
-  setShowModal,
-  // setTableData
-}) => {
+const AddLecture = ({ showModal, setShowModal, setTableData }) => {
   // ----------------------------
   const { Option } = Select;
 
@@ -35,12 +30,6 @@ const AddLecture = ({
     },
   };
 
-  // eslint-disable-next-line arrow-body-style
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().endOf("day");
-  };
-
   const dispatch = useDispatch();
   const route = useNavigate();
 
@@ -48,15 +37,8 @@ const AddLecture = ({
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    const data = {
-      title: values.title,
-      course_id: values.course_id,
-      semester: values.semester,
-      year: `${values.year.$y}-${values.year.$y + 1}`,
-      section_id: values.section_id,
-    };
     api
-      .post("lectures", data, {
+      .post("lectures", values, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -64,8 +46,8 @@ const AddLecture = ({
         },
       })
       .then((res) => {
-        dispatch(setLectureId(res.data.data.id));
-        sessionStorage.setItem("lecture_id", res.data.data.id);
+        dispatch(setLectureId({ ...res.data.data, name: res.data.data.title }));
+        sessionStorage.setItem("lecture_id", res.data.data);
 
         toast.success(res.data.message, {
           position: "bottom-left",
@@ -141,6 +123,26 @@ const AddLecture = ({
         .catch((err) => console.log(err));
     }
   }, [course_id, token]);
+
+  // ----------Rooms------------------
+
+  const [roomsList, setRoomsList] = useState([]);
+  useEffect(() => {
+    if (token) {
+      api
+        .get("rooms", {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setRoomsList(res.data.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [token]);
   return (
     <Modal
       open={showModal}
@@ -249,13 +251,37 @@ const AddLecture = ({
             },
           ]}
         >
-          <DatePicker
-            // onChange={(ev) => console.log(ev.$y)}
-            picker="year"
-            disabledDate={disabledDate}
-            size="large"
-            className="w-full"
-          />
+          <Select placeholder="select year" size="large">
+            <Option value="2020-2021">2020-2021</Option>
+            <Option value="2021-2022">2021-2022</Option>
+            <Option value="2022-2023">2022-2023</Option>
+            <Option value="2023-2024">2023-2024</Option>
+            <Option value="2024-2025">2024-2025</Option>
+            <Option value="2025-2026">2025-2026</Option>
+            <Option value="2026-2027">2026-2027</Option>
+            <Option value="2027-2028">2027-2028</Option>
+            <Option value="2028-2029">2028-2029</Option>
+            <Option value="2029-2030">2029-2030</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          name="room_id"
+          label="Room"
+          rules={[
+            {
+              required: true,
+              message: "Please select room!",
+            },
+          ]}
+        >
+          <Select placeholder="select Room Number" size="large">
+            {roomsList.map((item) => (
+              <Option value={item.id} key={item.id}>
+                {item.building + item.number}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item className="!mb-0" wrapperCol={{ offset: 0, span: 24 }}>

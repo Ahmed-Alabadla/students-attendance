@@ -1,73 +1,94 @@
 import React, { useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { Button, Upload } from "antd";
+import * as XLSX from "xlsx";
+import api from "../../api";
+import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ImportAttendance = () => {
-  const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
-  const handleUpload = () => {
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      if (
-        file.name.split(".")[1] === "xlsx" ||
-        file.name.split(".")[1] === "txt"
-      ) {
-        formData.append("files[]", file);
-      }
-    });
-    setUploading(true);
+  const [studentNumbers, setStudentNumbers] = useState([]);
 
-    // You can use any AJAX library you like
-    // fetch("https://www.mocky.io/v2/5cc8019d300000980a055e76", {
-    //   method: "POST",
-    //   body: formData,
-    // })
-    //   .then((res) => res.json())
-    //   .then(() => {
-    //     setFileList([]);
-    //     message.success("upload successfully.");
-    //   })
-    //   .catch(() => {
-    //     message.error("upload failed.");
-    //   })
-    //   .finally(() => {
-    //     setUploading(false);
-    //   });
+  const handleFileUpload = async (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+      const numbers = jsonData.map((row) => row[0]);
+      setStudentNumbers(numbers);
+    };
+
+    reader.readAsArrayBuffer(file);
   };
-  const props = {
-    onRemove: (file) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
-      newFileList.splice(index, 1);
-      setFileList(newFileList);
-    },
-    beforeUpload: (file) => {
-      setFileList([...fileList, file]);
-      return false;
-    },
-    fileList,
+
+  const { lecture_id } = useSelector((state) => state.lecture);
+  const token = sessionStorage.getItem("token");
+
+  const handleUpload = () => {
+    setUploading(true);
+    studentNumbers.map(async (number) => {
+      await api
+        .post(
+          "attendances",
+          { student_number: number, lecture_id: lecture_id.id },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+              Accept: "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          setUploading(false);
+          toast.success(`${res.data.message} - ${number}`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message + " - " + number, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        });
+    });
   };
+  const { Dragger } = Upload;
   return (
     <div className="w-full">
-      <Upload {...props} className="w-full">
-        <div className="border-dashed border-2 hover:border-sky-500 rounded-lg border-gray-300 flex flex-col items-center p-3">
-          <InboxOutlined className="text-5xl text-sky-600 mt-3" />
-
-          <p className="text-lg font-medium mt-3 text-center">
-            Click or drag file to this area to upload
-          </p>
-          <p className="text-gray-600 text-center m-5">
-            Support for a single or bulk upload. Strictly prohibited from
-            uploading company data or other banned files.
-          </p>
-        </div>
-      </Upload>
+      <Dragger beforeUpload={handleFileUpload}>
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">
+          Click or drag Excel file to this area to upload
+        </p>
+      </Dragger>
+      <ToastContainer />
       <Button
         type="primary"
         size="large"
         onClick={handleUpload}
-        disabled={fileList.length === 0}
+        disabled={studentNumbers.length === 0}
         loading={uploading}
         style={{
           marginTop: 16,

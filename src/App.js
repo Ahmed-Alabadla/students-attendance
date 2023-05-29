@@ -13,9 +13,9 @@ import Sections from "./components/Sections/Sections";
 import Rooms from "./components/Rooms/Rooms";
 import RecordAttendance from "./components/Attendances/record/RecordAttendance";
 import QRScanner from "./components/Attendances/record/QRScanner";
-import Attendances from "./components/Attendances/show/Attendances";
-import ShowAttendances from "./components/Attendances/show/ShowAttendances";
 import Lectures from "./components/Lectures/Lectures";
+import Attendances from "./components/Attendances/report/Attendances";
+import ExportReportOfStudent from "./components/Attendances/ExportReportOfStudent";
 
 function App() {
   return (
@@ -29,13 +29,16 @@ function App() {
             <Route path="qr" element={<QRScanner />} />
             <Route path="assistants" element={<Assistants />} />
             <Route path="attendances" element={<Attendances />} />
-            <Route path="show-attendances" element={<ShowAttendances />} />
             <Route path="students" element={<Students />} />
             <Route path="instructors" element={<Instructors />} />
             <Route path="rooms" element={<Rooms />} />
             <Route path="courses" element={<Courses />} />
             <Route path="record-attendance" element={<RecordAttendance />} />
             <Route path="profile" element={<Profile />} />
+            <Route
+              path="export-report-of-student"
+              element={<ExportReportOfStudent />}
+            />
           </Route>
           <Route path="/login" element={<SignIn />} />
         </Routes>

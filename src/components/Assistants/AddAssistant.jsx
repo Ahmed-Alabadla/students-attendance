@@ -32,7 +32,7 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     const data = {
-      name: values.name,
+      name: values.firstName + " " + values.lastName,
       email: values.email,
       password: values.password,
       phone: values.phone_number.prefix + values.phone_number.phone,
@@ -88,6 +88,7 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
         form.resetFields();
       }}
       footer={[]}
+      width={550}
       style={{
         top: 35,
       }}
@@ -111,16 +112,42 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
         scrollToFirstError
       >
         <Form.Item
-          name="name"
-          label="Full Name"
-          rules={[
-            {
-              required: true,
-              message: "Please input your fullName!",
-            },
-          ]}
+          label="Name"
+          style={{
+            marginBottom: 0,
+          }}
         >
-          <Input size="large" placeholder="Enter a Full Name" />
+          <Form.Item
+            name="firstName"
+            rules={[
+              {
+                required: true,
+                message: "Please input your first name!",
+              },
+            ]}
+            style={{
+              display: "inline-block",
+              width: "calc(50% - 8px)",
+            }}
+          >
+            <Input size="large" placeholder="Enter a first name" />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            rules={[
+              {
+                required: true,
+                message: "Please input your last name!",
+              },
+            ]}
+            style={{
+              display: "inline-block",
+              width: "calc(50% - 8px)",
+              margin: "0 8px",
+            }}
+          >
+            <Input size="large" placeholder="Enter a last name" />
+          </Form.Item>
         </Form.Item>
 
         <Form.Item

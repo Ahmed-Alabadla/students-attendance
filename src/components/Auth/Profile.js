@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const route = useNavigate();
@@ -47,9 +49,45 @@ const Profile = () => {
   const [form] = Form.useForm();
   const onFinish = (values) => {
     setLoading(true);
-    setShowModal(false);
+    api
+      .post("change-password", values, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
+          "X-HTTP-Method-Override": "PATCH",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setLoading(false);
+        setShowModal(false);
+        form.resetFields();
+        toast.success(res.data.message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err.response.data.message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      });
     console.log("Received values of form: ", values);
-    form.resetFields();
   };
 
   const validatePassword = (_, value, callback) => {
@@ -247,6 +285,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
