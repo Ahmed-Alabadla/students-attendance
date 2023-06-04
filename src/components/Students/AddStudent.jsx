@@ -38,7 +38,7 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
       address: values.address.city + " - " + values.address.street,
     };
 
-    console.log(data);
+    // console.log(data);
     api
       .post("students", data, {
         headers: {
@@ -65,7 +65,7 @@ const AddStudent = ({ showModal, setShowModal, setTableData }) => {
         setShowModal(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",

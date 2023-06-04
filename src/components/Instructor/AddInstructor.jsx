@@ -61,7 +61,7 @@ const AddInstructor = ({ showModalAdd, setShowModalAdd, setTableData }) => {
         setShowModalAdd(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         // toast.error("Email has already been taken", {
         toast.error(err.response.data.message, {
           position: "bottom-left",

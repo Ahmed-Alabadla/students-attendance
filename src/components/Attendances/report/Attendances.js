@@ -1,9 +1,9 @@
-import { Button, Form, Input, Select, Space, Table } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import { Button, Form, Select, Table } from "antd";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
-import { SearchOutlined } from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
+
+import * as XLSX from "xlsx";
 
 const { Option } = Select;
 
@@ -35,157 +35,31 @@ const Attendances = () => {
     }
   }, []);
   // ----------------------
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const searchInput = useRef(null);
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-  const handleReset = (clearFilters) => {
-    clearFilters();
-    setSearchText("");
-  };
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div
-        style={{
-          padding: 8,
-        }}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{
-            marginBottom: 8,
-            display: "block",
-          }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{
-              width: 90,
-            }}
-          >
-            Reset
-          </Button>
 
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? "#1890ff" : undefined,
-        }}
-      />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: "#ffc069",
-            padding: 0,
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      // width: '5%',
-      sorter: (a, b) => a.id - b.id,
-      sortDirections: ["descend", "ascend"],
-      // fixed: "left",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: "25%",
-      ...getColumnSearchProps("name"),
-    },
     {
       title: "Student number",
       dataIndex: "student_number",
       key: "student_number",
-      width: "20%",
-    },
-
-    {
-      title: "Total Attendance",
-      dataIndex: "total_attendance",
-      key: "total_attendance",
     },
     {
-      title: "Percentage Attendance",
-      dataIndex: "percent_attendance",
-      key: "percent_attendance",
-      sorter: (a, b) => a.id - b.id,
-      sortDirections: ["descend", "ascend"],
+      title: "Attendance count",
+      dataIndex: "attendance_count",
+      key: "attendance_count",
     },
-
     {
-      title: "Action",
-      key: "operation",
-      // fixed: "right",
-      // width: '10%',
-      render: () => <Button>Details</Button>,
+      title: "Attendance Ratio",
+      dataIndex: "ratio",
+      render: (text, record) => (
+        <span>
+          {((record.attendance_count * 100) / numberOfLectures).toFixed(2)}
+        </span>
+      ),
     },
   ];
 
   const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [pageSize, setPageSize] = useState(5);
-  const [loading, setLoading] = useState(false);
 
   // Handle page change event
   const handlePageChange = (page, pageSize) => {
@@ -197,10 +71,11 @@ const Attendances = () => {
   const token = sessionStorage.getItem("token");
 
   const [coursesList, setCoursesList] = useState([]);
+  const assistant_id = sessionStorage.getItem("assistant_id");
   useEffect(() => {
     if (token) {
       api
-        .get("courses", {
+        .get(`courses?assistant_id=${assistant_id}`, {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -210,9 +85,28 @@ const Attendances = () => {
         .then((res) => {
           setCoursesList(res.data.data);
         })
-        .catch((err) => console.log(err));
+        .catch();
     }
   }, [token]);
+  // ---------- section list ------------
+  const [sectionList, setSectionList] = useState([]);
+  const [course_id, setCourse_id] = useState();
+  useEffect(() => {
+    if (token) {
+      api
+        .get(`sections?course_id=${course_id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setSectionList(res.data.data);
+        })
+        .catch();
+    }
+  }, [course_id, token]);
 
   // --------------reports list --------------------
   const [showReports, setShowReports] = useState(false);
@@ -222,7 +116,7 @@ const Attendances = () => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     setReportsData({
       course_id: values.course_id,
       semester: values.semester,
@@ -238,7 +132,7 @@ const Attendances = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.data.students);
+        // console.log(res.data.data.students);
         setTableData(res.data.data.students);
         setNumberOfLectures(res.data.data.numberOfLectures);
         setShowReports(true);
@@ -246,8 +140,10 @@ const Attendances = () => {
       });
   };
 
-  const handleClickExportReports = () => {
-    api
+  // ----------------------------------
+
+  const handleClickExportReports = async () => {
+    await api
       .post("export-report", reportsData, {
         headers: {
           "Content-Type": "application/json",
@@ -257,8 +153,44 @@ const Attendances = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        convertToExcel(res.data);
       });
+  };
+  const convertToExcel = (data) => {
+    const lines = data.trim().split("\n");
+    const title = lines[0].split("\t");
+    const year = lines[1].split("\t");
+    const semester = lines[2].split("\t");
+    const lectures = lines[3].split("\t");
+
+    const rows = lines.slice(4).map((line) => line.split("\t"));
+
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      title,
+      year,
+      semester,
+      lectures,
+      ...rows,
+    ]);
+    // Set the width of the first column based on the width of the first row
+    const firstRowWidths = title.map((header) => ({ wch: header.length }));
+    worksheet["!cols"] = firstRowWidths;
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const excelData = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const excelUrl = URL.createObjectURL(excelData);
+    const link = document.createElement("a");
+    link.href = excelUrl;
+    link.download = "report.xlsx";
+    link.click();
   };
   return (
     <div className="bg-[#F4F6F9] h-full  rounded-lg flex flex-col  gap-16">
@@ -282,7 +214,6 @@ const Attendances = () => {
               className="w-full mt-5"
               columns={columns}
               dataSource={tableData}
-              loading={loading}
               bordered
               pagination={{
                 pageSize: pageSize,
@@ -323,10 +254,37 @@ const Attendances = () => {
                 },
               ]}
             >
-              <Select placeholder="select Course" size="large">
+              <Select
+                placeholder="select Course"
+                size="large"
+                onChange={(value) => setCourse_id(value)}
+              >
                 {coursesList.map((item) => (
                   <Option value={item.id} key={item.id}>
                     {item.title}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="section_id"
+              label="Section "
+              rules={[
+                {
+                  required: true,
+                  message: "Please select section!",
+                },
+              ]}
+            >
+              <Select
+                // disabled={!showInputSection}
+                placeholder="select Section "
+                size="large"
+              >
+                {sectionList.map((item) => (
+                  <Option value={item.id} key={item.id}>
+                    {item.number}
                   </Option>
                 ))}
               </Select>

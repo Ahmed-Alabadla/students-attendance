@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Select, Space, Table } from "antd";
+import { Button, Form, Input, Select, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
@@ -250,7 +250,6 @@ const Lectures = () => {
 
   const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [pageSize, setPageSize] = useState(5);
-  const [loading, setLoading] = useState(false);
 
   // Handle page change event
   const handlePageChange = (page, pageSize) => {
@@ -260,7 +259,7 @@ const Lectures = () => {
 
   // --------------lecture list --------------------
   const [showLecture, setShowLecture] = useState(false);
-  const [showInputSection, setShowInputSection] = useState(false);
+  // const [showInputSection, setShowInputSection] = useState(false);
   const [showAttendancesOfStudent, setShowAttendancesOfStudent] =
     useState(false);
   const [tableData, setTableData] = useState([]);
@@ -278,10 +277,10 @@ const Lectures = () => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     setLectureData({
       course_id: values.course_id,
-      section_id: values?.section_id,
+      section_id: values.section_id,
       year: values.year,
       semester: values.semester,
     });
@@ -306,10 +305,11 @@ const Lectures = () => {
   const token = sessionStorage.getItem("token");
 
   const [coursesList, setCoursesList] = useState([]);
+  const assistant_id = sessionStorage.getItem("assistant_id");
   useEffect(() => {
     if (token) {
       api
-        .get("courses", {
+        .get(`courses?assistant_id=${assistant_id}`, {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -372,7 +372,6 @@ const Lectures = () => {
               className="w-full mt-5"
               columns={columns}
               dataSource={tableData}
-              loading={loading}
               bordered
               pagination={{
                 pageSize: pageSize,
@@ -393,12 +392,12 @@ const Lectures = () => {
         ) : (
           <>
             <div className="flex items-center mb-5 gap-5">
-              <p className="flex items-center gap-3">
+              {/* <p className="flex items-center gap-3">
                 with section
                 <Checkbox
                   onChange={(e) => setShowInputSection(e.target.checked)}
                 ></Checkbox>
-              </p>
+              </p> */}
 
               <Button
                 type="primary"
@@ -443,30 +442,28 @@ const Lectures = () => {
                 </Select>
               </Form.Item>
 
-              {showInputSection && (
-                <Form.Item
-                  name="section_id"
-                  label="Section "
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select section!",
-                    },
-                  ]}
+              <Form.Item
+                name="section_id"
+                label="Section "
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select section!",
+                  },
+                ]}
+              >
+                <Select
+                  // disabled={!showInputSection}
+                  placeholder="select Section "
+                  size="large"
                 >
-                  <Select
-                    disabled={!showInputSection}
-                    placeholder="select Section "
-                    size="large"
-                  >
-                    {sectionList.map((item) => (
-                      <Option value={item.id} key={item.id}>
-                        {item.number}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              )}
+                  {sectionList.map((item) => (
+                    <Option value={item.id} key={item.id}>
+                      {item.number}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
               <Form.Item
                 name="semester"

@@ -1,13 +1,11 @@
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Form, Input, Modal } from "antd";
+import React from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api";
-import dayjs from "dayjs";
 
 const AddRoom = ({ showModal, setShowModal, setTableData }) => {
   // ----------------------------
-  const { Option } = Select;
 
   const formItemLayout = {
     labelCol: {
@@ -41,7 +39,7 @@ const AddRoom = ({ showModal, setShowModal, setTableData }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -59,7 +57,7 @@ const AddRoom = ({ showModal, setShowModal, setTableData }) => {
         setShowModal(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",

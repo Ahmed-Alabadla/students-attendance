@@ -46,7 +46,7 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
         },
       })
       .then((res) => {
-        console.log(res.data.message);
+        // console.log(res.data.message);
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -64,7 +64,7 @@ const AddAssistant = ({ showModal, setShowModal, setTableData }) => {
         setShowModal(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         // toast.error("Email has already been taken", {
         toast.error(err.response.data.message, {

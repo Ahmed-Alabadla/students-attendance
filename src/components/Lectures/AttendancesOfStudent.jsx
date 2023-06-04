@@ -30,7 +30,7 @@ const AttendancesOfStudent = ({
 
   const token = sessionStorage.getItem("token");
   useEffect(() => {
-    console.log(lectureData);
+    // console.log(lectureData);
     // api
     //   .post("attendances", lectureData, {
     //     headers: {
@@ -57,7 +57,7 @@ const AttendancesOfStudent = ({
         }
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setTableData(res.data.data);
       });
   }, []);

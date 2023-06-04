@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Form, Input, Tabs } from "antd";
+import { AutoComplete, Button, Form, Tabs } from "antd";
 import TabPane from "antd/es/tabs/TabPane";
 import React, { useEffect, useState } from "react";
 import QRScanner from "./QRScanner";
@@ -34,7 +34,7 @@ const RecordAttendance = () => {
 
   const [form] = Form.useForm();
   const onFinish = async (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     form.resetFields();
     await api
       .post(
@@ -49,7 +49,7 @@ const RecordAttendance = () => {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success(`${res.data.message} - ${values.student_number}`, {
           position: "top-right",
           autoClose: 3000,
@@ -62,7 +62,7 @@ const RecordAttendance = () => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         toast.error(err.response.data.message, {
           position: "top-right",
           autoClose: 3000,
@@ -90,8 +90,8 @@ const RecordAttendance = () => {
       })
       .then((res) => {
         setStudentData(res.data.data);
-      })
-      .catch((err) => console.log(err));
+      });
+    // .catch((err) => console.log(err));
   }, []);
 
   const [dataSource, setDataSource] = useState([]);

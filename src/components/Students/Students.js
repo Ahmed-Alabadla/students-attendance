@@ -1,9 +1,8 @@
-import { Button, Form, Input, Modal, Select, Space, Table } from "antd";
+import { Button, Form, Input, Modal, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SearchOutlined,
-  EyeFilled,
   EditFilled,
   DeleteFilled,
   ExclamationCircleFilled,
@@ -11,7 +10,6 @@ import {
 import Highlighter from "react-highlight-words";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ModalCourses from "./ModalCourses";
 import AddStudent from "./AddStudent";
 import api from "../api";
 import EditStudent from "./EditStudent";
@@ -270,7 +268,7 @@ const Students = () => {
             },
           })
           .then((res) => {
-            console.log(res);
+            // console.log(res);
             const updatedDataSource = tableData.filter(
               (instructor) => instructor.id !== record.id
             );

@@ -41,7 +41,7 @@ const SignIn = () => {
     setLoadingAssistant(true);
     const data = { ...values, type: "assistant" };
     // console.log("Received values of form -- assistant: ", data);
-
+    // console.log(data);
     api
       .post("login", data, {
         headers: {
@@ -53,6 +53,7 @@ const SignIn = () => {
         sessionStorage.setItem("token", res.data.data.token);
         sessionStorage.setItem("type", res.data.data.type);
         dispatch(setUser(res.data.data.assistant));
+        sessionStorage.setItem("assistant_id", res.data.data.assistant.id);
         sessionStorage.setItem("name", res.data.data.assistant.name);
         sessionStorage.setItem("email", res.data.data.assistant.email);
         setLoadingAssistant(false);
@@ -83,7 +84,7 @@ const SignIn = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         sessionStorage.setItem("token", res.data.data.token);
         sessionStorage.setItem("type", res.data.data.type);
         dispatch(setUser(res.data.data.admin));

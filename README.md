@@ -1,8 +1,7 @@
-# <p align="center">Students Attendance App</p>
+# <p align="center">Students Attendance App - G13</p>
 
 > **Warning**
 > Make sure to follow the requirements first.
-
 
 ## Prerequisites
 
@@ -13,6 +12,7 @@ Before cloning and running this React project, make sure you have the following 
 ## Clone the Repository
 
 To clone this repository, open your terminal and navigate to the directory where you want to clone the project. Then, run the following command:
+
 ```sh
 https://github.com/Ahmed-Alabadla/students-attendance.git
 ```

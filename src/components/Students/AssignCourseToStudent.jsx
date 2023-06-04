@@ -51,7 +51,7 @@ const AssignCourseToStudent = ({
         },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -66,7 +66,7 @@ const AssignCourseToStudent = ({
         setShowModalAssignCourse(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",

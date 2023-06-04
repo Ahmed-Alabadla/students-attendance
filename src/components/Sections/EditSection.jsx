@@ -49,7 +49,7 @@ const EditSection = ({
         setEditDataSection(null);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         toast.error(err.response.data.message, {
           position: "bottom-left",
           autoClose: 5000,

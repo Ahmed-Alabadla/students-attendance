@@ -214,8 +214,8 @@ const Assistants = () => {
         .then((res) => {
           setTableData(res.data.data);
           setLoading(false);
-        })
-        .catch((err) => console.log(err));
+        });
+      // .catch((err) => console.log(err));
     }
   }, [token]);
 
@@ -281,7 +281,7 @@ const Assistants = () => {
           });
       },
       onCancel() {
-        console.log("Cancel");
+        // console.log("Cancel");
       },
     });
   };

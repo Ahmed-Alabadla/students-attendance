@@ -30,7 +30,7 @@ const QRScanner = () => {
             }
           )
           .then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             toast.success(`${res.data.message} - ${id}`, {
               position: "top-right",
               autoClose: 3000,
@@ -43,7 +43,7 @@ const QRScanner = () => {
             });
           })
           .catch((err) => {
-            console.log(err);
+            // console.log(err);
             toast.error(err.response.data.message, {
               position: "top-right",
               autoClose: 3000,
@@ -65,7 +65,7 @@ const QRScanner = () => {
       <div className=" w-[400px]">
         <QrScanner
           onDecode={(result) => setId(result)}
-          onError={(error) => console.log(error?.message)}
+          // onError={(error) => console.log(error?.message)}
         />
       </div>
       <ToastContainer />

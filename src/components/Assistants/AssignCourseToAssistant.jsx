@@ -50,7 +50,7 @@ const AssignCourseToAssistant = ({
         },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -65,7 +65,7 @@ const AssignCourseToAssistant = ({
         setShowModalAssignCourse(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",
@@ -95,8 +95,8 @@ const AssignCourseToAssistant = ({
         })
         .then((res) => {
           setCoursesList(res.data.data);
-        })
-        .catch((err) => console.log(err));
+        });
+      // .catch((err) => console.log(err));
     }
   }, [token]);
 

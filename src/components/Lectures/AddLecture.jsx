@@ -67,7 +67,7 @@ const AddLecture = ({ showModal, setShowModal, setTableData }) => {
         route("/record-attendance");
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",
@@ -86,10 +86,11 @@ const AddLecture = ({ showModal, setShowModal, setTableData }) => {
   // ----------courses------------------
 
   const [coursesList, setCoursesList] = useState([]);
+  const assistant_id = sessionStorage.getItem("assistant_id");
   useEffect(() => {
     if (token) {
       api
-        .get("courses", {
+        .get(`courses?assistant_id=${assistant_id}`, {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",

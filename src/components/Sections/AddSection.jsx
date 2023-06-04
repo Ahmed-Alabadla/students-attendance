@@ -31,7 +31,7 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log(values);
+    // console.log(values);
     api
       .post("sections", values, {
         headers: {
@@ -41,7 +41,7 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         toast.success(res.data.message, {
           position: "bottom-left",
           autoClose: 5000,
@@ -59,7 +59,7 @@ const AddSection = ({ showModal, setShowModal, setTableData }) => {
         setShowModal(false);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
 
         toast.error(err.response.data.message, {
           position: "bottom-left",
