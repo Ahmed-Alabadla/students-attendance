@@ -116,9 +116,10 @@ const Attendances = () => {
 
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    // console.log("Received values of form: ", values);
+    console.log("Received values of form: ", values);
     setReportsData({
       course_id: values.course_id,
+      section_id: values.section_id,
       semester: values.semester,
       year: values.year,
     });
