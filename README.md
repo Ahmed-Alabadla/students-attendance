@@ -1,4 +1,8 @@
-# <p align="center">Students Attendance App - G13</p>
+<a href="https://github.com/Ahmed-Alabadla/students-attendance"> <h1 align="center">Students Attendance</h1></a>
+
+## About
+
+Students Attendance is a management system with dashboard for multi users ( Student - Eng - Instructor - Admin ) for IUG university.
 
 > **Warning**
 > Make sure to follow the requirements first.
@@ -14,7 +18,7 @@ Before cloning and running this React project, make sure you have the following 
 To clone this repository, open your terminal and navigate to the directory where you want to clone the project. Then, run the following command:
 
 ```sh
-https://github.com/Ahmed-Alabadla/students-attendance.git
+git clone https://github.com/Ahmed-Alabadla/students-attendance.git
 ```
 
 ## Project Setup
@@ -44,3 +48,11 @@ npm start
 ```
 
 The application will be served at [localhost:3000](http://localhost:3000) by default.
+
+this command will create users (Admin - Assistant):
+
+Admin
+     > email: admin@gmail.com , password: password
+
+Assistant
+     > email: assistant@gmail.com , password: password 
