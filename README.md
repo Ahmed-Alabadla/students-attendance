@@ -51,8 +51,6 @@ The application will be served at [localhost:3000](http://localhost:3000) by def
 
 this command will create users (Admin - Assistant):
 
-Admin
-     > email: admin@gmail.com , password: password
+Admin > email: admin@gmail.com , password: password
 
-Assistant
-     > email: assistant@gmail.com , password: password 
+Assistant > email: assistant@gmail.com , password: password
